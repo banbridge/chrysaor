@@ -1,0 +1,10 @@
+[package]
+name = "infra"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+sea-orm = {workspace = true, features = ["with-chrono", "debug-print", "sqlx-mysql", "with-rust_decimal", "runtime-tokio"]}
+
+common = {path = "../common"}

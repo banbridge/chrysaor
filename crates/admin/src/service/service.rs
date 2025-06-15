@@ -1,17 +1,19 @@
-use api::admin::v1::req::*;
+use crate::{conf, domain, util};
+use std::sync::Arc;
 
-use crate::domain::uc::IAdminUc;
-
+#[derive(Clone)]
 pub struct AdminService {
-    uc: Box<dyn IAdminUc>,
+    pub config: conf::AppConf,
+    pub uc: Arc<dyn domain::IAdminUC>,
+    pub jwt: Arc<util::jwt::JWT>,
 }
 
 impl AdminService {
-    pub fn new(uc: Box<dyn IAdminUc>) -> Self {
-        Self { uc }
-    }
-
-    pub fn say_hello(&self, req: HelloReq) -> HelloResp {
-        self.uc.say_hello(req)
+    pub fn new(config: &conf::AppConf, uc: Arc<dyn domain::IAdminUC>) -> Self {
+        AdminService {
+            config: config.clone(),
+            uc,
+            jwt: Arc::new(util::jwt::JWT::new(&config)),
+        }
     }
 }

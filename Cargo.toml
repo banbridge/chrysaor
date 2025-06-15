@@ -1,10 +1,31 @@
 [workspace]
+members = [
+    "api",
+    "crates/admin"
+, "crates/common", "crates/infra"]
+
 resolver = "3"
-members = ["api", "common", "crates/admin"]
 
 [workspace.dependencies]
-tokio = {version = "1", features = ["full"]}
-prost = "0.14"
+tokio = { version = "1", features = ["full"] }
+serde = "1"
 axum = "0.8"
+prost = "0.14"
+protobuf = "4.31.1-release"
 walkdir = "2"
 serde_json = "1"
+config = "0.15"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+sea-orm = "1.1"
+anyhow = "1"
+thiserror = "2"
+num_cpus = "1"
+tower-http = "0.6"
+xid = "1.1"
+rand = "0.9.1"
+chrono = "0.4.41"
+lazy_static = "1.5.0"
+validator = "0.20"
+bytesize = "2"
+jsonwebtoken = "9"

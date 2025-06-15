@@ -1,5 +1,9 @@
-use api::admin::v1::req::*;
+use crate::obj::{ListUserReq, ListUserResp};
 
-pub trait IAdminUc {
-    fn say_hello(&self, req: HelloReq) -> HelloResp;
+pub trait IAdminUC: Send + Sync {
+    fn get_user_uc(&self) -> &dyn IUserUC;
+}
+
+pub trait IUserUC: Send + Sync {
+    fn list_user(&self, req: ListUserReq) -> ListUserResp;
 }

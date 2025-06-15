@@ -1,20 +1,25 @@
-use crate::domain::uc::IAdminUc;
-use api::admin::v1::req::*;
+use super::user::UserUsecase;
+use crate::domain::IUserUC;
+use crate::{data, domain};
+use std::sync::Arc;
 
-pub struct AdminUsercase {}
+#[derive(Clone)]
+pub struct AdminUsecase {
+    user_uc: Arc<dyn IUserUC>,
+    data: data::Data,
+}
 
-impl AdminUsercase {
-    pub fn new() -> Self {
-        AdminUsercase {}
+impl AdminUsecase {
+    pub fn new(data: &data::Data) -> Self {
+        AdminUsecase {
+            user_uc: Arc::new(UserUsecase {}),
+            data: data.clone(),
+        }
     }
 }
 
-impl IAdminUc for AdminUsercase {
-    fn say_hello(&self, req: HelloReq) -> HelloResp {
-        HelloResp {
-            msg: "hello".to_string(),
-            code: 0,
-            data: "uc".to_string(),
-        }
+impl domain::IAdminUC for AdminUsecase {
+    fn get_user_uc(&self) -> &dyn IUserUC {
+        &*self.user_uc
     }
 }
