@@ -1,0 +1,12 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+admin = "0.1.1"
+prost = { workspace = true }
+axum = {workspace = true}
+
+[build-dependencies]
+prost-build = "0.14"

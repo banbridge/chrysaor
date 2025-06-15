@@ -1,0 +1,12 @@
+syntax = "proto3";
+package admin.v1;
+
+
+// import "base/base.proto";
+
+message HelloResp {
+    string Name = 1;
+    repeated string Emails = 2;
+
+    // base.Base Base = 100;
+}

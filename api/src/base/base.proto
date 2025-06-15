@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package base;
+
+message Base {
+    string LogID = 1;
+
+    map<string, string> Extra = 100;
+}
