@@ -78,6 +78,7 @@ impl Server {
             .layer(timeout_l)
             .layer(body_limit_l)
             .layer(cors_l)
+            .layer(middleware::from_fn(crate::middleware::request_middleware))
             .layer(tracing_l)
             .layer(normalize_path_l)
             .with_state(admin_service)

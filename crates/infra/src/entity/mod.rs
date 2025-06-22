@@ -2,9 +2,4 @@
 
 pub mod prelude;
 
-pub mod t_cloudnative_phone_dc;
-pub mod t_cloudnative_phone_feature_gate;
-pub mod t_cloudnative_phone_pod_info;
-pub mod t_cloudnative_phone_pod_model_rule_settings;
-pub mod t_cloudnative_phone_product_statistic;
-pub mod user;
+pub mod t_blog_user;

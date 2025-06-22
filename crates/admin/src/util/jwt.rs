@@ -1,4 +1,5 @@
 use crate::conf;
+use common::error::BizError;
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, get_current_timestamp,
 };
@@ -63,14 +64,17 @@ impl JWT {
             exp: current_time.saturating_add(self.expiration.as_secs()),
         };
 
-        let jwt_token = jsonwebtoken::encode(&self.header, &claim, &self.encode_secret)?;
+        let jwt_token = jsonwebtoken::encode(&self.header, &claim, &self.encode_secret)
+            .map_err(|err| BizError::jwt_encode(err.to_string().as_str()))?;
 
         Ok(jwt_token)
     }
 
     pub fn decode(&self, token: &str) -> anyhow::Result<Principal> {
         let decoded_claim: Claim =
-            jsonwebtoken::decode::<Claim>(token, &self.decode_secret, &self.validation)?.claims;
+            jsonwebtoken::decode::<Claim>(token, &self.decode_secret, &self.validation)
+                .map_err(|err| BizError::jwt_decode(err.to_string().as_str()))?
+                .claims;
 
         let principal = decoded_claim.sub;
         Ok(principal)

@@ -15,6 +15,8 @@ pub enum BizCode {
     // auth 相关错误码
     JwtInvalidToken = 1020001, // auth 无效
     Unauthenticated = 1020002, // 未授权
+    JwtDecode = 1020003,
+    JwtEncode = 1020004,
 }
 
 impl BizCode {
@@ -31,6 +33,8 @@ impl BizCode {
 
             BizCode::JwtInvalidToken => 401,
             BizCode::Unauthenticated => 403,
+            BizCode::JwtDecode => 401,
+            BizCode::JwtEncode => 401,
         }
     }
 }
@@ -78,5 +82,15 @@ impl BizError {
             format!("{:?}", err).as_str(),
             biz_code as u32,
         )
+    }
+
+    pub fn jwt_encode(msg: &str) -> Self {
+        let biz_code = BizCode::JwtEncode;
+        BizError::new(biz_code.status_code(), msg, biz_code as u32)
+    }
+
+    pub fn jwt_decode(msg: &str) -> Self {
+        let biz_code = BizCode::JwtDecode;
+        BizError::new(biz_code.status_code(), msg, biz_code as u32)
     }
 }
