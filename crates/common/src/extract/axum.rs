@@ -4,12 +4,12 @@ use axum::extract::{FromRequest, Request};
 use serde::de::DeserializeOwned;
 use validator::Validate;
 
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Clone)]
 pub struct BindAndValidate<T>(pub T);
 
 impl<T, S> FromRequest<S> for BindAndValidate<T>
 where
-    T: DeserializeOwned + Validate,
+    T: DeserializeOwned + ::prost_validate::Validator,
     S: Send + Sync,
     axum::Json<T>: FromRequest<S, Rejection = axum::extract::rejection::JsonRejection>,
 {

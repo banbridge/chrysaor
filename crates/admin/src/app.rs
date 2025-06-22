@@ -1,5 +1,5 @@
 use crate::service::service::AdminService;
-use crate::usercase::uc::AdminUsecase;
+use crate::usecase::uc::AdminUsecase;
 use crate::{conf, data, server, service};
 use axum::debug_handler;
 use axum::extract::State;
@@ -12,15 +12,11 @@ use tracing_subscriber::util::SubscriberInitExt;
 pub async fn run() -> anyhow::Result<()> {
     let config = conf::AppConf::load("config/admin/app", config::FileFormat::Yaml)?;
 
-    println!("{:?}", config);
+    //println!("{:?}", config);
 
     init_logger(&config);
 
-    let data = data::Data::new(&config).await?;
-
-    let admin_uc = Arc::new(AdminUsecase::new(&data));
-
-    let admin_service = AdminService::new(&config, admin_uc);
+    let admin_service = wire_gen(Arc::clone(&config)).await?;
 
     let server = server::Server::new(&config);
 
@@ -29,6 +25,20 @@ pub async fn run() -> anyhow::Result<()> {
     server.start(admin_service, router).await?;
 
     Ok(())
+}
+
+async fn wire_gen(config: Arc<conf::AppConf>) -> anyhow::Result<AdminService> {
+    let data = data::Data::new(Arc::clone(&config)).await?;
+
+    let admin_repo = data::AdminRepo::new(Arc::clone(&data));
+
+    let admin_uc = Arc::new(AdminUsecase::new(
+        Arc::clone(&data),
+        Arc::clone(&admin_repo),
+    ));
+
+    let admin_service = AdminService::new(Arc::clone(&config), admin_uc);
+    Ok(admin_service)
 }
 
 pub fn init_logger(conf: &conf::AppConf) {

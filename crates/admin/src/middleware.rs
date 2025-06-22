@@ -1,12 +1,14 @@
 use axum::{
-    RequestExt,
-    body::Body,
     extract::{Request, State},
-    http::{StatusCode, header},
+    http::header,
     middleware::Next,
-    response::{IntoResponse, Response},
+    response::Response,
 };
+use common::context::{BanbridgeMetainfo, LogId};
 use common::error::BizError;
+use common::{context, id_gen};
+use metainfo::{METAINFO, MetaInfo};
+use std::cell::RefCell;
 
 use crate::service::service::AdminService;
 
@@ -74,4 +76,18 @@ pub async fn request_middleware(req: Request, next: Next) -> Response {
         resp_body
     );
     Response::from_parts(resp_parts, resp_body)
+}
+
+pub async fn request_timer(req: Request, next: Next) -> Response {
+    let log_id = req
+        .headers()
+        .get(context::LOG_ID_HEADER)
+        .and_then(|v| v.to_str().ok())
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| id_gen::gen_log_id().to_string());
+
+    let mut metainfo = MetaInfo::new();
+    metainfo.set_logid(LogId::from_string(log_id));
+
+    METAINFO.scope(RefCell::new(metainfo), next.run(req)).await
 }

@@ -1,0 +1,25 @@
+syntax = "proto3";
+package admin_v1;
+
+//import "idl/base/base.proto";
+
+message User{
+    string Username = 1;
+    string UserID = 2;
+    int32 Age = 3;
+    string Email = 4;
+    string Phone = 5;
+}
+
+message ListUserResult{
+    repeated User Users = 1;
+
+    int64 Total = 99;
+    int64 PageNum = 100;
+    int64 PageSize = 101;
+}
+
+message ListUserResp{
+  //  base.ResponseMetadata ResponseMetadata = 1;
+    ListUserResult Result = 2;
+}

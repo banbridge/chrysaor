@@ -1,5 +1,6 @@
 use crate::error::BizError;
 use crate::param::base;
+use crate::{context};
 use axum;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
@@ -8,6 +9,7 @@ use serde::{Deserialize, Serialize};
 pub type ApiResult<T> = Result<ApiResponse<T>, BizError>;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "PascalCase")]
 struct ResponseMetadata {
     request_id: String,
 
@@ -16,6 +18,7 @@ struct ResponseMetadata {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "PascalCase")]
 pub struct ApiResponse<T> {
     response_metadata: ResponseMetadata,
 
@@ -77,6 +80,7 @@ where
                 status_code,
                 msg,
                 biz_code,
+                String::from("Unkown"),
             ))),
             data: None,
         }
@@ -92,8 +96,8 @@ where
     }
 
     fn build_metadata(biz_error: Option<BizError>) -> ResponseMetadata {
-        let log_id = "";
-
+       // let log_id = logid::get_or_defalue_logid();
+        let log_id = context::get_or_default_log_id();
         ResponseMetadata {
             request_id: log_id.to_string(),
             error: biz_error,
@@ -102,6 +106,7 @@ where
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "PascalCase")]
 pub struct Page<T> {
     pub total: u64,
     pub page_num: u64,

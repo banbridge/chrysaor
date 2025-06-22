@@ -20,6 +20,9 @@ validator = {workspace = true,  features = ["derive"]}
 bytesize = {workspace = true}
 jsonwebtoken = {workspace = true}
 chrono = {workspace = true}
+async-trait = {workspace = true}
+metainfo = {workspace = true}
+
 
 api = {path = "../../api"}
 infra = {path = "../infra"}

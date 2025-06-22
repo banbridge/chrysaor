@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use anyhow::Context;
 use config::FileFormat;
 use serde::Deserialize;
@@ -32,7 +33,7 @@ pub struct JwtConf {
 }
 
 impl AppConf {
-    pub fn load(file_name: &str, format: FileFormat) -> anyhow::Result<Self> {
+    pub fn load(file_name: &str, format: FileFormat) -> anyhow::Result<Arc<Self>> {
         config::Config::builder()
             .add_source(
                 config::File::with_name(file_name)

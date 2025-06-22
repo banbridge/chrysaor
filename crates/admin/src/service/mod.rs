@@ -1,6 +1,5 @@
 use crate::service::service::AdminService;
 use axum::Router;
-use axum::http::StatusCode;
 use common::error::BizError;
 use common::param;
 
@@ -15,6 +14,11 @@ pub fn create_router() -> Router<AdminService> {
         )
         .fallback(async || -> param::ApiResult<()> {
             tracing::warn!("unable to create API router");
-            Err(BizError::new(400, "not found", 10032))
+            Err(BizError::new(
+                400,
+                "not found",
+                10032,
+                String::from("NotFound"),
+            ))
         })
 }

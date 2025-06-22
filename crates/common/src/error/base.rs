@@ -4,19 +4,23 @@ use axum::response::{IntoResponse, Response};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
+pub type BizResult<T> = Result<T, BizError>;
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BizError {
     status_code: u16,
     message: String,
     biz_code: u32,
+    biz_msg: String,
 }
 
 impl BizError {
-    pub fn new(status_code: u16, message: &str, biz_code: u32) -> Self {
+    pub fn new(status_code: u16, message: &str, biz_code: u32, biz_msg: String) -> Self {
         BizError {
             status_code,
             message: message.to_string(),
             biz_code,
+            biz_msg,
         }
     }
 
@@ -59,7 +63,7 @@ mod tests {
     use super::*;
     #[test]
     fn test_biz_error() {
-        let err = BizError::new(400, "test", 1);
+        let err = BizError::new(400, "test", 1, String::from("test"));
         println!("{}", err);
     }
 }

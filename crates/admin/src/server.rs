@@ -12,6 +12,7 @@ use std::net::SocketAddr;
 use std::time::Duration;
 use tower_http::trace::{OnResponse, TraceLayer};
 use tracing::Span;
+use common::context;
 
 pub struct Server {
     config: conf::AppConf,
@@ -51,9 +52,9 @@ impl Server {
         let tracing_l = TraceLayer::new_for_http().make_span_with(|request: &Request| {
             let method = request.method().to_string();
             let path = request.uri().path().to_string();
-            let trace_id = xid::new();
+            let log_id = context::get_or_default_log_id();
 
-            tracing::info_span!("api request", path = %path, method = %method, trace_id = %trace_id)
+            tracing::info_span!("api request", path = %path, method = %method, log_id = %log_id)
         }).on_request(())
             .on_failure(())
             .on_response(LatencyResponse);
@@ -71,15 +72,16 @@ impl Server {
 
         Router::new()
             .merge(router)
-            .layer(middleware::from_fn_with_state(
-                admin_service.clone(),
-                crate::middleware::jwt_auth,
-            ))
+            // .layer(middleware::from_fn_with_state(
+            //     admin_service.clone(),
+            //     crate::middleware::jwt_auth,
+            // ))
             .layer(timeout_l)
             .layer(body_limit_l)
             .layer(cors_l)
             .layer(middleware::from_fn(crate::middleware::request_middleware))
             .layer(tracing_l)
+            .layer(middleware::from_fn(crate::middleware::request_timer))
             .layer(normalize_path_l)
             .with_state(admin_service)
     }

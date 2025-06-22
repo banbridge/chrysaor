@@ -17,7 +17,7 @@ pub struct Model {
     #[sea_orm(unique)]
     pub username: Option<String>,
     pub description: Option<String>,
-    pub gender: Option<enumeration::Gender>,
+    pub gender: Option<i32>,
     pub password: Option<String>,
     pub avatar: Option<String>,
     pub email: Option<String>,

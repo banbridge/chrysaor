@@ -4,7 +4,7 @@ build:
 
 .PHONY: run
 run:
-	cargo run
+	RUST_LOG=debug RUST_BACKTRACE=1 cargo run
 
 .PHONY: fmt
 fmt:

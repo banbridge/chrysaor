@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package admin_v1;
+
+import "idl/base/base.proto";
+
+message ListUserReq{
+    optional string Username = 1;
+    optional string UserID = 2;
+
+    optional base.PageReq Page = 3;
+}

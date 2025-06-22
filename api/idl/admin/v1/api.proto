@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package admin_v1;
+
+import "idl/admin/v1/req.proto";
+import "idl/admin/v1/resp.proto";
+
+service AdminService {
+    rpc ListUser(ListUserReq) returns (ListUserResp);
+}

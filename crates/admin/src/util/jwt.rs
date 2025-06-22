@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::conf;
 use common::error::BizError;
 use jsonwebtoken::{
@@ -35,7 +36,7 @@ pub struct JWT {
 }
 
 impl JWT {
-    pub fn new(config: &conf::AppConf) -> JWT {
+    pub fn new(config: Arc<conf::AppConf>) -> JWT {
         let mut validation = Validation::new(Algorithm::HS256);
         validation.set_audience(&[&config.jwt().audience]);
         validation.set_issuer(&[&config.jwt().issuer]);

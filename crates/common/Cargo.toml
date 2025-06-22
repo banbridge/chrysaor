@@ -15,3 +15,12 @@ thiserror = {workspace = true}
 validator = {workspace = true,features = ["derive"] }
 jsonwebtoken = {workspace = true}
 anyhow = {workspace = true}
+bcrypt = {workspace = true}
+get_if_addrs = {workspace = true}
+itoa = {workspace = true}
+coarsetime = {workspace = true}
+hex = {workspace = true}
+faststr = {workspace = true}
+yit_id_generator  = {workspace = true}
+metainfo = {workspace = true}
+prost-validate = { workspace = true, features = ["derive"] }

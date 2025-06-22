@@ -5,8 +5,14 @@ edition = "2024"
 
 [dependencies]
 admin = "0.1.1"
-prost = { workspace = true }
 axum = {workspace = true}
+serde = {workspace = true, features = ["derive"]}
+prost = {workspace = true}
+validator = {workspace = true, features = ["derive"]}
+prost-reflect = { workspace = true ,features = ["derive", "serde"]}
+prost-validate = { workspace = true, features = ["derive"] }
 
 [build-dependencies]
-prost-build = "0.14"
+prost-build = {workspace = true}
+prost-validate-build = { workspace = true }
+prost-reflect-build = { workspace = true }
