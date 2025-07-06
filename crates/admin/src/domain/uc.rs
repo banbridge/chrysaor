@@ -10,4 +10,5 @@ pub trait IAdminUC: Send + Sync {
 #[async_trait]
 pub trait IUserUC: Send + Sync {
     async fn list_user(&self, req: usecase::ListUserInput) -> BizResult<usecase::ListUserOutput>;
+    async fn login(&self, req: usecase::LoginInput) -> BizResult<String>;
 }

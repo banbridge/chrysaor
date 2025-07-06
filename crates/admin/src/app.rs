@@ -1,9 +1,6 @@
 use crate::service::service::AdminService;
 use crate::usecase::uc::AdminUsecase;
 use crate::{conf, data, server, service};
-use axum::debug_handler;
-use axum::extract::State;
-use common::param::{ApiResponse, ApiResult};
 use std::sync::Arc;
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;

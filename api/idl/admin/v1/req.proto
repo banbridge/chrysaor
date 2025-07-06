@@ -3,10 +3,20 @@ syntax = "proto3";
 package admin_v1;
 
 import "idl/base/base.proto";
+import "idl/third_party/validate.proto";
 
 message ListUserReq{
     optional string Username = 1;
     optional string UserID = 2;
 
     optional base.PageReq Page = 3;
+}
+
+
+message LoginReq{
+    optional string Username = 1;
+    optional string UserID = 2;
+    string Password = 3[(validate.rules).string={
+        min_len: 5, max_len: 20
+    }];
 }

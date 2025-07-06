@@ -18,6 +18,22 @@ pub struct ListUserReq {
 #[serde(rename_all = "PascalCase")]
 #[derive(::prost_validate::Validator)]
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LoginReq {
+    #[prost(string, optional, tag = "1")]
+    #[validate(name = "admin_v1.LoginReq.Username")]
+    pub username: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, optional, tag = "2")]
+    #[validate(name = "admin_v1.LoginReq.UserID")]
+    pub user_id: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, tag = "3")]
+    #[validate(name = "admin_v1.LoginReq.Password")]
+    #[validate(r#type(string(min_len = 5, max_len = 20)))]
+    pub password: ::prost::alloc::string::String,
+}
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "PascalCase")]
+#[derive(::prost_validate::Validator)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct User {
     #[prost(string, tag = "1")]
     #[validate(name = "admin_v1.User.Username")]
@@ -58,8 +74,31 @@ pub struct ListUserResult {
 #[derive(::prost_validate::Validator)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListUserResp {
-    ///   base.ResponseMetadata ResponseMetadata = 1;
+    #[prost(message, optional, tag = "1")]
+    #[validate(name = "admin_v1.ListUserResp.ResponseMetadata")]
+    pub response_metadata: ::core::option::Option<super::base::ResponseMetadata>,
     #[prost(message, optional, tag = "2")]
     #[validate(name = "admin_v1.ListUserResp.Result")]
     pub result: ::core::option::Option<ListUserResult>,
+}
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "PascalCase")]
+#[derive(::prost_validate::Validator)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LoginResult {
+    #[prost(string, tag = "1")]
+    #[validate(name = "admin_v1.LoginResult.Token")]
+    pub token: ::prost::alloc::string::String,
+}
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "PascalCase")]
+#[derive(::prost_validate::Validator)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LoginResp {
+    #[prost(message, optional, tag = "1")]
+    #[validate(name = "admin_v1.LoginResp.ResponseMetadata")]
+    pub response_metadata: ::core::option::Option<super::base::ResponseMetadata>,
+    #[prost(message, optional, tag = "2")]
+    #[validate(name = "admin_v1.LoginResp.Result")]
+    pub result: ::core::option::Option<LoginResult>,
 }

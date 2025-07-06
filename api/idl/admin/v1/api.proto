@@ -7,4 +7,5 @@ import "idl/admin/v1/resp.proto";
 
 service AdminService {
     rpc ListUser(ListUserReq) returns (ListUserResp);
+    rpc Login(LoginReq) returns (LoginResp);
 }

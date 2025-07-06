@@ -21,8 +21,8 @@ impl UserRepo {
 impl IUserRepo for UserRepo {
     async fn get_user(
         &self,
-        user_id: Option<&str>,
-        username: Option<&str>,
+        user_id: Option<String>,
+        username: Option<String>,
     ) -> BizResult<t_blog_user::Model> {
         if None == user_id && None == username {
             return Err(BizError::invalid_param(

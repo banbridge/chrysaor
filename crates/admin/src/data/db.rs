@@ -9,7 +9,7 @@ use std::time::Duration;
 
 #[derive(Clone)]
 pub struct Data {
-    config: Arc<conf::AppConf>,
+    pub(crate) config: Arc<conf::AppConf>,
     db: Arc<sea_orm::DatabaseConnection>,
 }
 
