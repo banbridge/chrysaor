@@ -5,7 +5,14 @@ edition = "2024"
 
 [dependencies]
 serde = { workspace = true, features = ["derive"] }
-sea-orm = {workspace = true, features = ["with-chrono", "debug-print", "sqlx-mysql", "with-rust_decimal", "runtime-tokio"]}
-async-trait = {workspace = true}
+sea-orm = { workspace = true, features = [
+    "with-chrono",
+    "debug-print",
+    "sqlx-mysql",
+    "with-rust_decimal",
+    "runtime-tokio",
+] }
+async-trait = { workspace = true }
+shaku = { workspace = true }
 
-common = {path = "../common"}
+common = { path = "../common" }

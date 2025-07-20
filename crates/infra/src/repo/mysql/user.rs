@@ -7,6 +7,8 @@ use common::error::{BizError, BizResult};
 use sea_orm::{ColumnTrait, Condition, EntityTrait, QueryFilter};
 use std::sync::Arc;
 
+#[derive(shaku::Component)]
+#[shaku(interface = IUserRepo)]
 pub struct UserRepo {
     db: Arc<sea_orm::DatabaseConnection>,
 }
@@ -29,7 +31,7 @@ impl IUserRepo for UserRepo {
                 "user_id or username can not be empty",
             ));
         }
-        
+
         let conditions = Condition::any()
             .add(t_blog_user::Column::UserId.eq(user_id))
             .add(t_blog_user::Column::Username.eq(username));

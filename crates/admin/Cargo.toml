@@ -23,6 +23,7 @@ chrono = {workspace = true}
 async-trait = {workspace = true}
 metainfo = {workspace = true}
 faststr = {workspace = true}
+shaku = {workspace = true}
 
 api = {path = "../../api"}
 infra = {path = "../infra"}
