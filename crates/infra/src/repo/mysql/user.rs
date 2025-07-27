@@ -7,8 +7,6 @@ use common::error::{BizError, BizResult};
 use sea_orm::{ColumnTrait, Condition, EntityTrait, QueryFilter};
 use std::sync::Arc;
 
-#[derive(shaku::Component)]
-#[shaku(interface = IUserRepo)]
 pub struct UserRepo {
     db: Arc<sea_orm::DatabaseConnection>,
 }

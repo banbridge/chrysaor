@@ -57,17 +57,11 @@ pub struct User {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListUserResult {
     #[prost(message, repeated, tag = "1")]
-    #[validate(name = "admin_v1.ListUserResult.Users")]
-    pub users: ::prost::alloc::vec::Vec<User>,
+    #[validate(name = "admin_v1.ListUserResult.Row")]
+    pub row: ::prost::alloc::vec::Vec<User>,
     #[prost(int64, tag = "99")]
     #[validate(name = "admin_v1.ListUserResult.Total")]
     pub total: i64,
-    #[prost(int64, tag = "100")]
-    #[validate(name = "admin_v1.ListUserResult.PageNum")]
-    pub page_num: i64,
-    #[prost(int64, tag = "101")]
-    #[validate(name = "admin_v1.ListUserResult.PageSize")]
-    pub page_size: i64,
 }
 #[derive(serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "PascalCase")]

@@ -1,11 +1,11 @@
 use crate::service::service::AdminService;
-use api::admin::v1::{ListUserReq, LoginReq, LoginResult};
+use api::admin::{ListUserReq, ListUserResult, LoginReq, LoginResult};
 use axum::Router;
 use axum::extract::State;
+use common::error::BizResult;
 use common::extract::BindAndValidate;
 use common::param::{ApiResponse, ApiResult};
 use tracing::instrument;
-use common::error::BizResult;
 
 pub fn create_router() -> Router<AdminService> {
     Router::new()
@@ -17,10 +17,10 @@ pub fn create_router() -> Router<AdminService> {
 async fn list_user(
     State(admin_service): State<AdminService>,
     BindAndValidate(req): BindAndValidate<ListUserReq>,
-) -> String {
+) -> BizResult<ApiResponse<ListUserResult>> {
     tracing::info!("start list_user, req{:?}", req);
-    // admin_service.uc.get_user_uc().list_user(req);
-    "djh".to_string()
+    let list_user_output = admin_service.uc.get_user_uc().list_user(req.into()).await?;
+    Ok(ApiResponse::ok_with_data(list_user_output.into()))
 }
 
 #[instrument(name = "login", skip_all)]

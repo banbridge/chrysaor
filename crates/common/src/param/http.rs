@@ -1,6 +1,6 @@
+use crate::context;
 use crate::error::BizError;
 use crate::param::base;
-use crate::{context};
 use axum;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
@@ -56,17 +56,6 @@ where
         }
     }
 
-    pub fn ok_with_page<U>(
-        pagination: &base::Pagination,
-        total: u64,
-        row: Vec<U>,
-    ) -> ApiResponse<Page<U>> {
-        ApiResponse {
-            response_metadata: Self::build_metadata(None),
-            data: Some(Page::from_pagination(pagination, total, row)),
-        }
-    }
-
     pub fn err(err: BizError) -> Self {
         ApiResponse {
             response_metadata: Self::build_metadata(Some(err)),
@@ -96,7 +85,7 @@ where
     }
 
     fn build_metadata(biz_error: Option<BizError>) -> ResponseMetadata {
-       // let log_id = logid::get_or_defalue_logid();
+        // let log_id = logid::get_or_defalue_logid();
         let log_id = context::get_or_default_log_id();
         ResponseMetadata {
             request_id: log_id.to_string(),
@@ -108,15 +97,15 @@ where
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "PascalCase")]
 pub struct Page<T> {
-    pub total: u64,
-    pub page_num: u64,
-    pub page_size: u64,
+    pub total: i64,
+    pub page_num: i64,
+    pub page_size: i64,
 
     pub row: Vec<T>,
 }
 
 impl<T> Page<T> {
-    pub fn new(page_num: u64, page_size: u64, total: u64, row: Vec<T>) -> Self {
+    pub fn new(page_num: i64, page_size: i64, total: i64, row: Vec<T>) -> Self {
         Page {
             total,
             page_num,
@@ -125,7 +114,7 @@ impl<T> Page<T> {
         }
     }
 
-    pub fn from_pagination(pagination: &base::Pagination, total: u64, row: Vec<T>) -> Self {
+    pub fn from_pagination(pagination: &base::Pagination, total: i64, row: Vec<T>) -> Self {
         Page {
             total,
             page_num: pagination.page_num,

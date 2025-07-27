@@ -7,22 +7,21 @@ use axum::http::Response;
 use axum::{Router, middleware};
 use bytesize::ByteSize;
 
+use common::context;
 use std::fmt::{Display, Formatter};
 use std::net::SocketAddr;
+use std::sync::Arc;
 use std::time::Duration;
 use tower_http::trace::{OnResponse, TraceLayer};
 use tracing::Span;
-use common::context;
 
 pub struct Server {
-    config: conf::AppConf,
+    config: Arc<conf::AppConf>,
 }
 
 impl Server {
-    pub fn new(conf: &conf::AppConf) -> Self {
-        Server {
-            config: conf.clone(),
-        }
+    pub fn new(conf: Arc<conf::AppConf>) -> Self {
+        Server { config: conf }
     }
 
     pub async fn start(
@@ -49,13 +48,15 @@ impl Server {
     }
 
     fn build_router(&self, admin_service: AdminService, router: Router<AdminService>) -> Router {
-        let tracing_l = TraceLayer::new_for_http().make_span_with(|request: &Request| {
-            let method = request.method().to_string();
-            let path = request.uri().path().to_string();
-            let log_id = context::get_or_default_log_id();
+        let tracing_l = TraceLayer::new_for_http()
+            .make_span_with(|request: &Request| {
+                let method = request.method().to_string();
+                let path = request.uri().path().to_string();
+                let log_id = context::get_or_default_log_id();
 
-            tracing::info_span!("api request", path = %path, method = %method, log_id = %log_id)
-        }).on_request(())
+                tracing::info_span!("api request", path = %path, method = %method, log_id = %log_id)
+            })
+            .on_request(())
             .on_failure(())
             .on_response(LatencyResponse);
 

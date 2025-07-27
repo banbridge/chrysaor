@@ -20,11 +20,11 @@ pub enum BizCode {
     Unauthenticated = 1020002, // 未授权
     JwtDecode = 1020003,
     JwtEncode = 1020004,
-    
+
     // 数据库相关错误吗
-    DBCommon = 1030000,// 数据库错误
-    DBNotFound = 1030001,// 数据库未找到
-    DBQueryFailed = 1030002, // 数据库查询失败
+    DBCommon = 1030000,       // 数据库错误
+    DBNotFound = 1030001,     // 数据库未找到
+    DBQueryFailed = 1030002,  // 数据库查询失败
     DBUpdateFailed = 1030003, // 数据库更新失败
     DBInsertFailed = 1030004, // 插入数据库失败
     DBDeleteFailed = 1030005, // 删除数据库失败
@@ -47,7 +47,7 @@ impl BizCode {
             BizCode::Unauthenticated => 403,
             BizCode::JwtDecode => 401,
             BizCode::JwtEncode => 401,
-            
+
             BizCode::DBCommon => 500,
             BizCode::DBNotFound => 404,
             BizCode::DBQueryFailed => 500,
@@ -60,7 +60,7 @@ impl BizCode {
 
 impl Display for BizCode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self) 
+        write!(f, "{:?}", self)
     }
 }
 
@@ -174,7 +174,7 @@ impl BizError {
             biz_code.to_string(),
         )
     }
-    
+
     pub fn db_common(msg: &str) -> Self {
         let biz_code = BizCode::DBCommon;
         BizError::new(
@@ -184,8 +184,8 @@ impl BizError {
             biz_code.to_string(),
         )
     }
-    
-    pub fn db_not_found(msg: &str) -> Self{
+
+    pub fn db_not_found(msg: &str) -> Self {
         let biz_code = BizCode::DBNotFound;
         BizError::new(
             biz_code.status_code(),
@@ -194,8 +194,8 @@ impl BizError {
             biz_code.to_string(),
         )
     }
-    
-    pub fn db_query_failed(msg: &str) -> Self{
+
+    pub fn db_query_failed(msg: &str) -> Self {
         let biz_code = BizCode::DBQueryFailed;
         BizError::new(
             biz_code.status_code(),
@@ -204,8 +204,8 @@ impl BizError {
             biz_code.to_string(),
         )
     }
-    
-    pub fn db_insert_failed(msg: &str) -> Self{
+
+    pub fn db_insert_failed(msg: &str) -> Self {
         let biz_code = BizCode::DBInsertFailed;
         BizError::new(
             biz_code.status_code(),
@@ -214,8 +214,8 @@ impl BizError {
             biz_code.to_string(),
         )
     }
-    
-    pub fn db_update_failed(msg: &str) -> Self{
+
+    pub fn db_update_failed(msg: &str) -> Self {
         let biz_code = BizCode::DBUpdateFailed;
         BizError::new(
             biz_code.status_code(),
@@ -224,8 +224,8 @@ impl BizError {
             biz_code.to_string(),
         )
     }
-    
-    pub fn db_delete_failed(msg: &str) -> Self{
+
+    pub fn db_delete_failed(msg: &str) -> Self {
         let biz_code = BizCode::DBDeleteFailed;
         BizError::new(
             biz_code.status_code(),

@@ -11,11 +11,11 @@ pub async fn run() -> anyhow::Result<()> {
 
     //println!("{:?}", config);
 
-    init_logger(&config);
+    init_logger(config.clone());
 
-    let admin_service = wire_gen(Arc::clone(&config)).await?;
+    let admin_service = wire_gen(config.clone()).await?;
 
-    let server = server::Server::new(&config);
+    let server = server::Server::new(config.clone());
 
     let router = service::create_router();
 
@@ -25,20 +25,18 @@ pub async fn run() -> anyhow::Result<()> {
 }
 
 async fn wire_gen(config: Arc<conf::AppConf>) -> anyhow::Result<AdminService> {
-    let data = data::Data::new(Arc::clone(&config)).await?;
+    let data = data::Data::new(config.clone()).await?;
 
-    let admin_repo = data::AdminRepo::new(Arc::clone(&data));
+    let admin_repo = data::AdminRepo::new(data.clone());
 
-    let admin_uc = Arc::new(AdminUsecase::new(
-        Arc::clone(&data),
-        Arc::clone(&admin_repo),
-    ));
+    let admin_uc = Arc::new(AdminUsecase::new(data.clone(), admin_repo.clone()));
 
-    let admin_service = AdminService::new(Arc::clone(&config), admin_uc);
+    let admin_service = AdminService::new(config.clone(), admin_uc.clone());
+    
     Ok(admin_service)
 }
 
-pub fn init_logger(conf: &conf::AppConf) {
+pub fn init_logger(_conf: Arc<conf::AppConf>) {
     tracing_subscriber::registry()
         .with(EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")))
         .with(

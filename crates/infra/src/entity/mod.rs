@@ -2,4 +2,5 @@
 
 pub mod prelude;
 
+pub mod casbin_rule;
 pub mod t_blog_user;

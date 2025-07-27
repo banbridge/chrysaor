@@ -13,6 +13,5 @@ sea-orm = { workspace = true, features = [
     "runtime-tokio",
 ] }
 async-trait = { workspace = true }
-shaku = { workspace = true }
 
 common = { path = "../common" }

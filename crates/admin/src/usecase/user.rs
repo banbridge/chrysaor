@@ -1,12 +1,12 @@
+use super::{ListUserInput, ListUserOutput, LoginInput};
 use crate::data::AdminRepo;
 use crate::domain;
+use crate::util::jwt::{JWT, Principal};
 use async_trait::async_trait;
-use std::sync::Arc;
-use sea_orm::Iden;
 use common::crypt;
 use common::error::{BizError, BizResult};
-use crate::util::jwt::{Principal, JWT};
-use super::{ListUserInput, ListUserOutput, LoginInput};
+use sea_orm::Iden;
+use std::sync::Arc;
 
 pub struct UserUsecase {
     admin_repo: Arc<AdminRepo>,
@@ -15,10 +15,7 @@ pub struct UserUsecase {
 
 impl UserUsecase {
     pub fn new(admin_repo: Arc<AdminRepo>, jwt: Arc<JWT>) -> Arc<Self> {
-        Arc::new(UserUsecase {
-            admin_repo,
-            jwt,
-        })
+        Arc::new(UserUsecase { admin_repo, jwt })
     }
 }
 
@@ -34,9 +31,16 @@ impl domain::IUserUC for UserUsecase {
     }
 
     async fn login(&self, req: LoginInput) -> BizResult<String> {
-        let user = self.admin_repo.user_repo().get_user(req.username, req.user_id).await?;
-        
-        let check = crypt::verify_password(user.password.unwrap_or_default().as_str(), req.password.as_str())?;
+        let user = self
+            .admin_repo
+            .user_repo()
+            .get_user(req.username, req.user_id)
+            .await?;
+
+        let check = crypt::verify_password(
+            user.password.unwrap_or_default().as_str(),
+            req.password.as_str(),
+        )?;
         if !check {
             return Err(BizError::invalid_param("username or password is incorrect"));
         }

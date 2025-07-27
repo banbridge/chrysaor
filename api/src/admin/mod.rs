@@ -1,4 +1,5 @@
-pub mod admin_v1;
+mod admin_v1;
 mod base;
 
-pub use admin_v1 as v1;
+pub use admin_v1::*;
+pub use base::*;

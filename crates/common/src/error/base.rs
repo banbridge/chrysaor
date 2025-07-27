@@ -7,6 +7,7 @@ use std::fmt::Display;
 pub type BizResult<T> = Result<T, BizError>;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "PascalCase")]
 pub struct BizError {
     status_code: u16,
     message: String,

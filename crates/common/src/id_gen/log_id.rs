@@ -1,10 +1,10 @@
 use get_if_addrs::get_if_addrs;
-use rand::{Rng, rngs::ThreadRng};
+use rand::{rngs::ThreadRng, Rng};
 use std::mem::MaybeUninit;
-use std::net::{IpAddr};
+use std::net::IpAddr;
 use std::sync::LazyLock;
 
-const VERSION: &str = "02";
+const VERSION: &str = "01";
 const CHARSET: &[u8] = b"0123456789ABCDEF";
 
 pub struct LogIdGenerator {}

@@ -24,3 +24,5 @@ faststr = {workspace = true}
 yit_id_generator  = {workspace = true}
 metainfo = {workspace = true}
 prost-validate = { workspace = true, features = ["derive"] }
+
+api = { path = "../../api" }

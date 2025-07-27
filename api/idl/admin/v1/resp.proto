@@ -12,11 +12,9 @@ message User{
 }
 
 message ListUserResult{
-    repeated User Users = 1;
+    repeated User Row = 1;
 
     int64 Total = 99;
-    int64 PageNum = 100;
-    int64 PageSize = 101;
 }
 
 message ListUserResp{

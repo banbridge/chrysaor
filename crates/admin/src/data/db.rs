@@ -9,7 +9,7 @@ use std::time::Duration;
 
 #[derive(Clone)]
 pub struct Data {
-    pub(crate) config: Arc<conf::AppConf>,
+    pub config: Arc<conf::AppConf>,
     db: Arc<sea_orm::DatabaseConnection>,
 }
 
@@ -59,7 +59,7 @@ impl AdminRepo {
         Arc::new(AdminRepo { data, user_repo })
     }
 
-    pub fn user_repo(&self) -> Arc<dyn IUserRepo> {
-        Arc::clone(&self.user_repo)
+    pub fn user_repo(&self) -> &dyn IUserRepo {
+        &*self.user_repo
     }
 }

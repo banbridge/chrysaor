@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use common::error::BizResult;
 
 #[async_trait]
-pub trait IUserRepo: Send + Sync + shaku::Interface {
+pub trait IUserRepo: Send + Sync  {
     async fn get_user(
         &self,
         user_id: Option<String>,
