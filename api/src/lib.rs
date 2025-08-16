@@ -1,5 +1,4 @@
-pub mod admin;
-
+include!("admin_gen.rs");
 #[cfg(test)]
 mod tests {
     use super::*;

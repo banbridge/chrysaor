@@ -4,15 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-admin = "0.1.1"
-axum = {workspace = true}
-serde = {workspace = true, features = ["derive"]}
-prost = {workspace = true}
-validator = {workspace = true, features = ["derive"]}
-prost-reflect = { workspace = true ,features = ["derive", "serde"]}
+serde = { workspace = true, features = ["derive"] }
+prost = { workspace = true }
 prost-validate = { workspace = true, features = ["derive"] }
+pilota = { workspace = true }
 
 [build-dependencies]
-prost-build = {workspace = true}
+prost-build = { workspace = true }
 prost-validate-build = { workspace = true }
-prost-reflect-build = { workspace = true }
+pilota-build = { workspace = true }

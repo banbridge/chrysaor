@@ -1,11 +1,13 @@
-use api::admin::{ListUserReq, LoginReq};
+use api::admin_gen::base::PageReqDto;
+use api::admin_gen::v1::{ListUserReqDto, ListUserResultDto, LoginReqDto, UserDto};
+use faststr::FastStr;
 use infra::entity::t_blog_user;
 use validator::Validate;
 
 #[derive(Debug, Clone, Validate)]
 pub struct ListUserInput {
-    pub user_id: Option<String>,
-    pub username: Option<String>,
+    pub user_id: Option<FastStr>,
+    pub username: Option<FastStr>,
 
     pub pagination: common::param::Pagination,
 }
@@ -17,9 +19,9 @@ pub struct ListUserOutput {
 }
 
 pub struct LoginInput {
-    pub username: Option<String>,
-    pub user_id: Option<String>,
-    pub password: String,
+    pub username: Option<FastStr>,
+    pub user_id: Option<FastStr>,
+    pub password: FastStr,
 }
 
 impl Validate for LoginInput {
@@ -44,19 +46,19 @@ impl Validate for LoginInput {
     }
 }
 
-impl From<LoginReq> for LoginInput {
-    fn from(value: LoginReq) -> Self {
+impl From<LoginReqDto> for LoginInput {
+    fn from(value: LoginReqDto) -> Self {
         Self {
-            username: value.username,
-            user_id: value.user_id,
-            password: value.password,
+            username: value.username.map(|v| FastStr::from(v)),
+            user_id: value.user_id.map(|v| FastStr::from(v)),
+            password: value.password.into(),
         }
     }
 }
 
-impl From<ListUserReq> for ListUserInput {
-    fn from(value: ListUserReq) -> Self {
-        let page = value.page.unwrap_or(api::admin::PageReq {
+impl From<ListUserReqDto> for ListUserInput {
+    fn from(value: ListUserReqDto) -> Self {
+        let page = value.page.unwrap_or(PageReqDto {
             page_num: 1,
             page_size: 10,
         });
@@ -71,7 +73,7 @@ impl From<ListUserReq> for ListUserInput {
     }
 }
 
-impl From<ListUserOutput> for api::admin::ListUserResult {
+impl From<ListUserOutput> for ListUserResultDto {
     fn from(value: ListUserOutput) -> Self {
         Self {
             total: value.total,
@@ -84,12 +86,12 @@ impl From<ListUserOutput> for api::admin::ListUserResult {
     }
 }
 
-pub fn convert_user_model_to_user_result(data: t_blog_user::Model) -> api::admin::User {
-    api::admin::User {
+pub fn convert_user_model_to_user_result(data: t_blog_user::Model) -> UserDto {
+    UserDto {
         user_id: data.user_id.unwrap_or_default(),
         username: data.username.unwrap_or_default(),
         email: data.email.unwrap_or_default(),
-        phone: "****".to_string(),
+        phone: "****".into(),
         age: 0,
     }
 }

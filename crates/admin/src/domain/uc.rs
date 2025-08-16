@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use faststr::FastStr;
 use common::error::BizResult;
 use crate::usecase;
 
@@ -10,5 +11,5 @@ pub trait IAdminUC: Send + Sync {
 #[async_trait]
 pub trait IUserUC: Send + Sync {
     async fn list_user(&self, req: usecase::ListUserInput) -> BizResult<usecase::ListUserOutput>;
-    async fn login(&self, req: usecase::LoginInput) -> BizResult<String>;
+    async fn login(&self, req: usecase::LoginInput) -> BizResult<FastStr>;
 }

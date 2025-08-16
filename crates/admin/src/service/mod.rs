@@ -2,6 +2,7 @@ use crate::service::service::AdminService;
 use axum::Router;
 use common::error::BizError;
 use common::param;
+use faststr::FastStr;
 
 pub mod service;
 mod user;
@@ -16,9 +17,9 @@ pub fn create_router() -> Router<AdminService> {
             tracing::warn!("unable to create API router");
             Err(BizError::new(
                 400,
-                "not found",
+                FastStr::from("not found"),
                 10032,
-                String::from("NotFound"),
+                FastStr::from("NotFound"),
             ))
         })
 }

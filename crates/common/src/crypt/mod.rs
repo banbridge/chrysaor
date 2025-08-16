@@ -2,13 +2,13 @@ use crate::error::{BizError, BizResult};
 
 pub fn crypt_password(password: &str) -> BizResult<String> {
     let hash_paas = bcrypt::hash(password, bcrypt::DEFAULT_COST)
-        .map_err(|err| BizError::bcrypt_failed(err.to_string().as_str()))?;
+        .map_err(|err| BizError::bcrypt_failed(err.to_string().into()))?;
     Ok(hash_paas)
 }
 
 pub fn verify_password(hash_password: &str, password: &str) -> BizResult<bool> {
     bcrypt::verify(password, hash_password)
-        .map_err(|err| BizError::bcrypt_failed(err.to_string().as_str()))
+        .map_err(|err| BizError::bcrypt_failed(err.to_string().into()))
 }
 
 #[cfg(test)]

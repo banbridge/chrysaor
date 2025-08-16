@@ -1,6 +1,7 @@
 use crate::param;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
+use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
@@ -10,16 +11,16 @@ pub type BizResult<T> = Result<T, BizError>;
 #[serde(rename_all = "PascalCase")]
 pub struct BizError {
     status_code: u16,
-    message: String,
+    message: FastStr,
     biz_code: u32,
-    biz_msg: String,
+    biz_msg: FastStr,
 }
 
 impl BizError {
-    pub fn new(status_code: u16, message: &str, biz_code: u32, biz_msg: String) -> Self {
+    pub fn new(status_code: u16, message: FastStr, biz_code: u32, biz_msg: FastStr) -> Self {
         BizError {
             status_code,
-            message: message.to_string(),
+            message: message,
             biz_code,
             biz_msg,
         }
@@ -64,7 +65,7 @@ mod tests {
     use super::*;
     #[test]
     fn test_biz_error() {
-        let err = BizError::new(400, "test", 1, String::from("test"));
+        let err = BizError::new(400, "test".into(), 1, FastStr::from("test"));
         println!("{}", err);
     }
 }

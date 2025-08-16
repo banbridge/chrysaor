@@ -1,5 +1,5 @@
 use crate::service::service::AdminService;
-use api::admin::{ListUserReq, ListUserResult, LoginReq, LoginResult};
+use api::admin_gen::v1::{ListUserReqDto, ListUserResultDto, LoginReqDto, LoginResultDto};
 use axum::Router;
 use axum::extract::State;
 use common::error::BizResult;
@@ -16,8 +16,8 @@ pub fn create_router() -> Router<AdminService> {
 #[instrument(name = "list_user", skip_all)]
 async fn list_user(
     State(admin_service): State<AdminService>,
-    BindAndValidate(req): BindAndValidate<ListUserReq>,
-) -> BizResult<ApiResponse<ListUserResult>> {
+    BindAndValidate(req): BindAndValidate<ListUserReqDto>,
+) -> BizResult<ApiResponse<ListUserResultDto>> {
     tracing::info!("start list_user, req{:?}", req);
     let list_user_output = admin_service.uc.get_user_uc().list_user(req.into()).await?;
     Ok(ApiResponse::ok_with_data(list_user_output.into()))
@@ -26,11 +26,11 @@ async fn list_user(
 #[instrument(name = "login", skip_all)]
 async fn login(
     State(admin_service): State<AdminService>,
-    BindAndValidate(req): BindAndValidate<LoginReq>,
-) -> BizResult<ApiResponse<LoginResult>> {
+    BindAndValidate(req): BindAndValidate<LoginReqDto>,
+) -> BizResult<ApiResponse<LoginResultDto>> {
     tracing::info!("start login, req{:?}", req);
 
     let token = admin_service.uc.get_user_uc().login(req.into()).await?;
 
-    Ok(ApiResponse::ok_with_data(LoginResult { token }))
+    Ok(ApiResponse::ok_with_data(LoginResultDto { token }))
 }

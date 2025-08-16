@@ -13,5 +13,7 @@ sea-orm = { workspace = true, features = [
     "runtime-tokio",
 ] }
 async-trait = { workspace = true }
+rudi = { workspace = true }
+faststr = { workspace = true, features = ["sea-orm", "serde"] }
 
 common = { path = "../common" }

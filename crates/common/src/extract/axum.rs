@@ -2,7 +2,6 @@ use crate::error::BizError;
 use crate::param::ApiResponse;
 use axum::extract::{FromRequest, Request};
 use serde::de::DeserializeOwned;
-use validator::Validate;
 
 #[derive(Clone)]
 pub struct BindAndValidate<T>(pub T);
@@ -19,11 +18,11 @@ where
         // 从请求中提取JSON数据
         let axum::Json(data) = axum::Json::from_request(req, state)
             .await
-            .map_err(|err| ApiResponse::err(BizError::param_bind(err.to_string().as_str())))?;
+            .map_err(|err| ApiResponse::err(BizError::param_bind(err.to_string().into())))?;
 
         // 验证数据
         data.validate()
-            .map_err(|err| ApiResponse::err(BizError::invalid_param(err.to_string().as_str())))?;
+            .map_err(|err| ApiResponse::err(BizError::invalid_param(err.to_string().into())))?;
 
         Ok(Self(data))
     }

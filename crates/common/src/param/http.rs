@@ -4,6 +4,7 @@ use crate::param::base;
 use axum;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
+use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 
 pub type ApiResult<T> = Result<ApiResponse<T>, BizError>;
@@ -63,13 +64,13 @@ where
         }
     }
 
-    pub fn new_with_code_and_msg(status_code: u16, msg: &str, biz_code: u32) -> Self {
+    pub fn new_with_code_and_msg(status_code: u16, msg: FastStr, biz_code: u32) -> Self {
         ApiResponse {
             response_metadata: Self::build_metadata(Some(BizError::new(
                 status_code,
                 msg,
                 biz_code,
-                String::from("Unkown"),
+                FastStr::from("Unkown"),
             ))),
             data: None,
         }

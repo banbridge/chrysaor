@@ -1,3 +1,4 @@
+use crate::service::service::AdminService;
 use axum::{
     extract::{Request, State},
     http::header,
@@ -7,31 +8,32 @@ use axum::{
 use common::context::{BanbridgeMetainfo, LogId};
 use common::error::BizError;
 use common::{context, id_gen};
+use faststr::FastStr;
 use metainfo::{METAINFO, MetaInfo};
 use std::cell::RefCell;
-
-use crate::service::service::AdminService;
 
 pub async fn jwt_auth(
     State(state): State<AdminService>,
     req: Request,
     next: Next,
 ) -> Result<Response, BizError> {
-    let token_header = req
-        .headers()
-        .get(header::AUTHORIZATION)
-        .ok_or(BizError::unauthenticated("authorization header is empty"))?;
+    let token_header =
+        req.headers()
+            .get(header::AUTHORIZATION)
+            .ok_or(BizError::unauthenticated(FastStr::from(
+                "authorization header is empty",
+            )))?;
 
     let token = token_header
         .to_str()
         .map_err(|err| {
             tracing::error!("authorization header to_str error: {:?}", err);
-            BizError::unauthenticated("authorization header is not a valid string")
+            BizError::unauthenticated(FastStr::from("authorization header is not a valid string"))
         })?
         .strip_prefix("Bearer ")
-        .ok_or(BizError::unauthenticated(
+        .ok_or(BizError::unauthenticated(FastStr::from(
             "authorization header must be Bearer type",
-        ))?;
+        )))?;
 
     tracing::info!("jwt_auth token: {:?}", token);
 

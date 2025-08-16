@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter};
-
 use crate::error::BizError;
+use faststr::FastStr;
+use std::fmt::{Display, Formatter};
 
 #[derive(Copy, Clone, Debug)]
 pub enum BizCode {
@@ -65,83 +65,83 @@ impl Display for BizCode {
 }
 
 impl BizError {
-    pub fn internal(msg: &str) -> Self {
+    pub fn internal(msg: FastStr) -> Self {
         let biz_code = BizCode::Internal;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn invalid_param(msg: &str) -> Self {
+    pub fn invalid_param(msg: FastStr) -> Self {
         let biz_code = BizCode::InvalidParam;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn param_bind(msg: &str) -> Self {
+    pub fn param_bind(msg: FastStr) -> Self {
         let biz_code = BizCode::ParamBind;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn json_parse(msg: &str) -> Self {
+    pub fn json_parse(msg: FastStr) -> Self {
         let biz_code = BizCode::JsonParse;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn json_serde(msg: &str) -> Self {
+    pub fn json_serde(msg: FastStr) -> Self {
         let biz_code = BizCode::JsonSerde;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn jwt_invalid_token(msg: &str) -> Self {
+    pub fn jwt_invalid_token(msg: FastStr) -> Self {
         let biz_code = BizCode::JwtInvalidToken;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn bcrypt_failed(msg: &str) -> Self {
+    pub fn bcrypt_failed(msg: FastStr) -> Self {
         let biz_code = BizCode::BcryptFailed;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn unauthenticated(msg: &str) -> Self {
+    pub fn unauthenticated(msg: FastStr) -> Self {
         let biz_code = BizCode::Unauthenticated;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
@@ -149,89 +149,89 @@ impl BizError {
         let biz_code = BizCode::UnknownAnyhow;
         BizError::new(
             biz_code.status_code(),
-            format!("{:?}", err).as_str(),
+            format!("{:?}", err).into(),
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn jwt_encode(msg: &str) -> Self {
+    pub fn jwt_encode(msg: FastStr) -> Self {
         let biz_code = BizCode::JwtEncode;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn jwt_decode(msg: &str) -> Self {
+    pub fn jwt_decode(msg: FastStr) -> Self {
         let biz_code = BizCode::JwtDecode;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn db_common(msg: &str) -> Self {
+    pub fn db_common(msg: FastStr) -> Self {
         let biz_code = BizCode::DBCommon;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn db_not_found(msg: &str) -> Self {
+    pub fn db_not_found(msg: FastStr) -> Self {
         let biz_code = BizCode::DBNotFound;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn db_query_failed(msg: &str) -> Self {
+    pub fn db_query_failed(msg: FastStr) -> Self {
         let biz_code = BizCode::DBQueryFailed;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn db_insert_failed(msg: &str) -> Self {
+    pub fn db_insert_failed(msg: FastStr) -> Self {
         let biz_code = BizCode::DBInsertFailed;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn db_update_failed(msg: &str) -> Self {
+    pub fn db_update_failed(msg: FastStr) -> Self {
         let biz_code = BizCode::DBUpdateFailed;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 
-    pub fn db_delete_failed(msg: &str) -> Self {
+    pub fn db_delete_failed(msg: FastStr) -> Self {
         let biz_code = BizCode::DBDeleteFailed;
         BizError::new(
             biz_code.status_code(),
             msg,
             biz_code as u32,
-            biz_code.to_string(),
+            biz_code.to_string().into(),
         )
     }
 }

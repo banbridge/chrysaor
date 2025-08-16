@@ -1,9 +1,9 @@
 syntax = "proto3";
-package admin_v1;
+package v1;
 
 import "idl/base/base.proto";
 
-message User{
+message UserDTO{
     string Username = 1;
     string UserID = 2;
     int32 Age = 3;
@@ -11,22 +11,22 @@ message User{
     string Phone = 5;
 }
 
-message ListUserResult{
-    repeated User Row = 1;
+message ListUserResultDTO{
+    repeated UserDTO Row = 1;
 
     int64 Total = 99;
 }
 
-message ListUserResp{
-    base.ResponseMetadata ResponseMetadata = 1;
-    ListUserResult Result = 2;
+message ListUserRespDTO{
+    base.ResponseMetadataDTO ResponseMetadata = 1;
+    ListUserResultDTO Result = 2;
 }
 
-message LoginResult{
+message LoginResultDTO{
     string Token = 1;
 }
 
-message LoginResp{
-    base.ResponseMetadata ResponseMetadata = 1;
-    LoginResult Result = 2;
+message LoginRespDTO{
+    base.ResponseMetadataDTO ResponseMetadata = 1;
+    LoginResultDTO Result = 2;
 }

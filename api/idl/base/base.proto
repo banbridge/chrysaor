@@ -4,26 +4,26 @@ package base;
 
 import "idl/third_party/validate.proto";
 
-message Base {
+message BaseDTO {
     string LogID = 1;
 
     map<string, string> Extra = 100;
 }
 
-message Error{
+message ErrorDTO{
     int32 CodeN = 1;
     string Code = 2;
     string Message = 3;
     int32 StatusCode = 4;
 }
 
-message ResponseMetadata{
+message ResponseMetadataDTO{
     string RequestID = 1;
 
-    optional Error Error = 100;
+    optional ErrorDTO Error = 100;
 }
 
-message PageReq{
+message PageReqDTO{
     int64 PageNum = 1[(validate.rules).int64 = {
         gt: 0,  // 大于0
     }];
@@ -33,7 +33,7 @@ message PageReq{
     }];
 }
 
-message PageResp{
+message PageRespDTO{
     int64 PageNum = 1;
     int64 PageSize = 2;
     int64 Total = 3;

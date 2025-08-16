@@ -1,13 +1,13 @@
+pub mod app;
+pub mod conf;
 pub mod data;
+pub mod ddd;
 pub mod domain;
+pub mod middleware;
 pub mod server;
 pub mod service;
 pub mod usecase;
 pub mod util;
-
-pub mod app;
-pub mod conf;
-pub mod middleware;
 
 #[cfg(test)]
 mod tests {

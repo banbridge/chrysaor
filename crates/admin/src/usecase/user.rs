@@ -1,21 +1,25 @@
 use super::{ListUserInput, ListUserOutput, LoginInput};
 use crate::data::AdminRepo;
-use crate::domain;
+use crate::domain::{self, IUserUC};
 use crate::util::jwt::{JWT, Principal};
 use async_trait::async_trait;
 use common::crypt;
 use common::error::{BizError, BizResult};
-use sea_orm::Iden;
+use faststr::FastStr;
 use std::sync::Arc;
 
+#[derive(Clone)]
+#[rudi::Singleton(async,name = "user_uc", binds=[Self::into_user_uc])]
 pub struct UserUsecase {
+    #[di(name = "admin_repo")]
     admin_repo: Arc<AdminRepo>,
+    #[di(name = "jwt")]
     jwt: Arc<JWT>,
 }
 
 impl UserUsecase {
-    pub fn new(admin_repo: Arc<AdminRepo>, jwt: Arc<JWT>) -> Arc<Self> {
-        Arc::new(UserUsecase { admin_repo, jwt })
+    fn into_user_uc(self) -> Arc<dyn IUserUC> {
+        Arc::new(self)
     }
 }
 
@@ -30,10 +34,10 @@ impl domain::IUserUC for UserUsecase {
         Ok(output)
     }
 
-    async fn login(&self, req: LoginInput) -> BizResult<String> {
+    async fn login(&self, req: LoginInput) -> BizResult<FastStr> {
         let user = self
             .admin_repo
-            .user_repo()
+            .user_repo
             .get_user(req.username, req.user_id)
             .await?;
 
@@ -42,7 +46,9 @@ impl domain::IUserUC for UserUsecase {
             req.password.as_str(),
         )?;
         if !check {
-            return Err(BizError::invalid_param("username or password is incorrect"));
+            return Err(BizError::invalid_param(FastStr::from(
+                "username or password is incorrect",
+            )));
         }
 
         let token = self.jwt.encode(&Principal {
