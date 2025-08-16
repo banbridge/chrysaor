@@ -2,7 +2,6 @@ use crate::error::BizError;
 use crate::param::ApiResponse;
 use axum::extract::{FromRequest, Request};
 use serde::de::DeserializeOwned;
-use validator::Validate;
 
 #[derive(Clone)]
 pub struct BindAndValidate<T>(pub T);

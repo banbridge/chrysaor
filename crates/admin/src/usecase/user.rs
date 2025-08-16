@@ -1,21 +1,24 @@
 use super::{ListUserInput, ListUserOutput, LoginInput};
 use crate::data::AdminRepo;
-use crate::domain;
+use crate::domain::{self, IUserUC};
 use crate::util::jwt::{JWT, Principal};
 use async_trait::async_trait;
 use common::crypt;
 use common::error::{BizError, BizResult};
-use sea_orm::Iden;
 use std::sync::Arc;
 
+#[derive(Clone)]
+#[rudi::Singleton(async,name = "user_uc", binds=[Self::into_user_uc])]
 pub struct UserUsecase {
+    #[di(name = "admin_repo")]
     admin_repo: Arc<AdminRepo>,
+    #[di(name = "jwt")]
     jwt: Arc<JWT>,
 }
 
 impl UserUsecase {
-    pub fn new(admin_repo: Arc<AdminRepo>, jwt: Arc<JWT>) -> Arc<Self> {
-        Arc::new(UserUsecase { admin_repo, jwt })
+    fn into_user_uc(self) -> Arc<dyn IUserUC> {
+        Arc::new(self)
     }
 }
 
@@ -33,7 +36,7 @@ impl domain::IUserUC for UserUsecase {
     async fn login(&self, req: LoginInput) -> BizResult<String> {
         let user = self
             .admin_repo
-            .user_repo()
+            .user_repo
             .get_user(req.username, req.user_id)
             .await?;
 

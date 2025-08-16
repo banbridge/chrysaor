@@ -7,13 +7,16 @@ use common::error::{BizError, BizResult};
 use sea_orm::{ColumnTrait, Condition, EntityTrait, QueryFilter};
 use std::sync::Arc;
 
+#[derive(Clone)]
+#[rudi::Singleton(name = "user_repo", binds=[Self::into_user_repo])]
 pub struct UserRepo {
+    #[di(name = "mysql_db")]
     db: Arc<sea_orm::DatabaseConnection>,
 }
 
 impl UserRepo {
-    pub fn new(db: Arc<sea_orm::DatabaseConnection>) -> Self {
-        UserRepo { db }
+    fn into_user_repo(self) -> Arc<dyn IUserRepo> {
+        Arc::new(self)
     }
 }
 
