@@ -1,10 +1,10 @@
-use std::sync::Arc;
 use crate::conf;
 use common::error::BizError;
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, get_current_timestamp,
 };
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use std::time::Duration;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -35,8 +35,10 @@ pub struct JWT {
     issuer: String,
 }
 
+#[rudi::Singleton(name = "jwt", binds = [Self::into_jwt])]
 impl JWT {
-    pub fn new(config: Arc<conf::AppConf>) -> JWT {
+    #[di]
+    pub fn new(#[di(name = "config")] config: Arc<conf::AppConf>) -> Self {
         let mut validation = Validation::new(Algorithm::HS256);
         validation.set_audience(&[&config.jwt().audience]);
         validation.set_issuer(&[&config.jwt().issuer]);
@@ -51,6 +53,10 @@ impl JWT {
             audience: config.jwt().audience.clone(),
             issuer: config.jwt().issuer.clone(),
         }
+    }
+
+    fn into_jwt(self) -> Arc<Self> {
+        Arc::new(self)
     }
 
     pub fn encode(&self, principal: &Principal) -> anyhow::Result<String> {

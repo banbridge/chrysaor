@@ -1,35 +1,31 @@
-use super::user::UserUsecase;
 use crate::data::AdminRepo;
-use crate::domain::IUserUC;
-use crate::{data, domain, util};
+use crate::domain::{IAdminUC, IUserUC};
+use crate::{data, util};
 use std::sync::Arc;
 
 #[derive(Clone)]
+#[rudi::Singleton(async,name = "admin_uc", binds=[Self::into_admin_uc])]
 pub struct AdminUsecase {
-    admin_repo: Arc<AdminRepo>,
+    #[di(name = "admin_repo")]
+    pub admin_repo: Arc<AdminRepo>,
 
-    user_uc: Arc<dyn IUserUC>,
-    data: Arc<data::Data>,
+    #[di(name = "user_uc")]
+    pub user_uc: Arc<dyn IUserUC>,
 
-    jwt: Arc<util::jwt::JWT>,
+    #[di(name = "data")]
+    pub data: Arc<data::Data>,
+
+    #[di(name = "jwt")]
+    pub jwt: Arc<util::jwt::JWT>,
 }
 
 impl AdminUsecase {
-    pub fn new(data: Arc<data::Data>, admin_repo: Arc<AdminRepo>) -> Self {
-        let config = data.config.clone();
-        let jwt = Arc::new(util::jwt::JWT::new(config));
-
-        AdminUsecase {
-            admin_repo: admin_repo.clone(),
-
-            user_uc: UserUsecase::new(admin_repo.clone(), jwt.clone()),
-            data: data.clone(),
-            jwt: jwt.clone(),
-        }
+    fn into_admin_uc(self) -> Arc<dyn IAdminUC> {
+        Arc::new(self)
     }
 }
 
-impl domain::IAdminUC for AdminUsecase {
+impl IAdminUC for AdminUsecase {
     fn get_user_uc(&self) -> &dyn IUserUC {
         &*self.user_uc
     }

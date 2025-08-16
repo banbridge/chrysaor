@@ -1,39 +1,28 @@
 use crate::service::service::AdminService;
-use crate::usecase::uc::AdminUsecase;
-use crate::{conf, data, server, service};
+use crate::{conf, server, service};
 use std::sync::Arc;
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
-pub async fn run() -> anyhow::Result<()> {
-    let config = conf::AppConf::load("config/admin/app", config::FileFormat::Yaml)?;
-
+#[rudi::Singleton]
+pub async fn run(#[di(name = "admin_service")] admin_service: AdminService) {
     //println!("{:?}", config);
 
-    init_logger(config.clone());
-
-    let admin_service = wire_gen(config.clone()).await?;
-
-    let server = server::Server::new(config.clone());
+    let server = server::Server::new(admin_service.clone().config);
 
     let router = service::create_router();
 
-    server.start(admin_service, router).await?;
-
-    Ok(())
+    server.start(admin_service, router).await.unwrap();
 }
 
-async fn wire_gen(config: Arc<conf::AppConf>) -> anyhow::Result<AdminService> {
-    let data = data::Data::new(config.clone()).await?;
+#[rudi::Singleton(name = "config")]
+pub fn get_config() -> Arc<conf::AppConf> {
+    let conf_info = conf::AppConf::load("config/admin/app", config::FileFormat::Yaml).unwrap();
 
-    let admin_repo = data::AdminRepo::new(data.clone());
+    init_logger(conf_info.clone());
 
-    let admin_uc = Arc::new(AdminUsecase::new(data.clone(), admin_repo.clone()));
-
-    let admin_service = AdminService::new(config.clone(), admin_uc.clone());
-    
-    Ok(admin_service)
+    conf_info
 }
 
 pub fn init_logger(_conf: Arc<conf::AppConf>) {
