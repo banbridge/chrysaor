@@ -2,10 +2,9 @@ syntax = "proto3";
 
 package v1;
 
-import "idl/admin/v1/req.proto";
-import "idl/admin/v1/resp.proto";
+import "idl/admin/v1/user.proto";
 
 service AdminService {
-    rpc ListUser(ListUserReqDTO) returns (ListUserRespDTO);
-    rpc Login(LoginReqDTO) returns (LoginRespDTO);
+  rpc ListUser(ListUserReqDto) returns (ListUserRespDto);
+  rpc Login(LoginReqDto) returns (LoginRespDto);
 }

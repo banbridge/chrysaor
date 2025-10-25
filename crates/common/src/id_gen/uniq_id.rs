@@ -1,9 +1,9 @@
 use std::sync::LazyLock;
 use yit_id_generator::{IdGeneratorOptions, YitIdHelper};
 
-struct UniqIdGenerator;
+pub struct UniqIdGenerator;
 
-pub static UNIQ_ID: LazyLock<UniqIdGenerator> = LazyLock::new(UniqIdGenerator::new);
+pub static UNIQ_ID: LazyLock<UniqIdGenerator> = LazyLock::new(UniqIdGenerator::default);
 
 pub fn gen_uniq_id() -> String {
     UNIQ_ID.generate()
@@ -16,9 +16,15 @@ impl UniqIdGenerator {
         YitIdHelper::SetIdGenerator(options);
         Self
     }
-    
+
     pub fn generate(&self) -> String {
         YitIdHelper::NextId().to_string()
+    }
+}
+
+impl Default for UniqIdGenerator {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

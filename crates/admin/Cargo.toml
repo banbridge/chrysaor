@@ -4,14 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axum = { workspace = true, features = ["macros"] }
+
 tokio = { workspace = true, features = ["full"] }
 serde_json = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 anyhow = { workspace = true }
 config = { workspace = true, features = ["yaml"] }
 tracing = { workspace = true, features = ["async-await"] }
-tracing-subscriber = { workspace = true, features = ["env-filter", "chrono"] }
 sea-orm = { workspace = true, features = [
     "with-chrono",
     "debug-print",
@@ -19,15 +18,7 @@ sea-orm = { workspace = true, features = [
     "with-rust_decimal",
     "runtime-tokio",
 ] }
-num_cpus = { workspace = true }
-tower-http = { workspace = true, features = [
-    "trace",
-    "timeout",
-    "cors",
-    "limit",
-    "normalize-path",
-    "auth",
-] }
+
 xid = { workspace = true }
 validator = { workspace = true, features = ["derive"] }
 bytesize = { workspace = true }
@@ -37,6 +28,9 @@ async-trait = { workspace = true }
 metainfo = { workspace = true }
 faststr = { workspace = true, features = ["sea-orm", "serde"] }
 rudi = { workspace = true }
+volo = { workspace = true }
+volo-http = { workspace = true }
+lazy_static = { workspace = true }
 
 api = { path = "../../api" }
 infra = { path = "../infra" }

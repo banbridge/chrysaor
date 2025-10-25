@@ -1,5 +1,6 @@
-mod option;
-mod repo;
+mod factory;
 pub mod mysql;
+mod user_repo;
 
-pub use repo::*;
+pub use factory::*;
+pub use user_repo::*;

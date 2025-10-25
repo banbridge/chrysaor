@@ -1,13 +1,9 @@
 use crate::context;
 use crate::error::BizError;
-use crate::param::base;
-use axum;
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
 use faststr::FastStr;
 use serde::{Deserialize, Serialize};
-
-pub type ApiResult<T> = Result<ApiResponse<T>, BizError>;
+use volo_http::server::extract::Json;
+use volo_http::{http::StatusCode, response::Response, server::IntoResponse};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "PascalCase")]
@@ -34,8 +30,14 @@ where
     fn into_response(self) -> Response {
         let status_code = self.status_code();
 
-        let body = axum::Json(self);
+        let body = Json(self);
         (status_code, body).into_response()
+    }
+}
+
+impl IntoResponse for BizError {
+    fn into_response(self) -> Response {
+        ApiResponse::<()>::err(self).into_response()
     }
 }
 
@@ -70,7 +72,7 @@ where
                 status_code,
                 msg,
                 biz_code,
-                FastStr::from("Unkown"),
+                FastStr::from("Unknown"),
             ))),
             data: None,
         }
@@ -78,8 +80,8 @@ where
 
     fn status_code(&self) -> StatusCode {
         let err = self.response_metadata.error.as_ref();
-        if err.is_some() {
-            StatusCode::from_u16(err.unwrap().status_code()).unwrap()
+        if let Some(err) = err {
+            StatusCode::from_u16(err.status_code()).unwrap()
         } else {
             StatusCode::OK
         }
@@ -91,36 +93,6 @@ where
         ResponseMetadata {
             request_id: log_id.to_string(),
             error: biz_error,
-        }
-    }
-}
-
-#[derive(Serialize, Debug)]
-#[serde(rename_all = "PascalCase")]
-pub struct Page<T> {
-    pub total: i64,
-    pub page_num: i64,
-    pub page_size: i64,
-
-    pub row: Vec<T>,
-}
-
-impl<T> Page<T> {
-    pub fn new(page_num: i64, page_size: i64, total: i64, row: Vec<T>) -> Self {
-        Page {
-            total,
-            page_num,
-            page_size,
-            row,
-        }
-    }
-
-    pub fn from_pagination(pagination: &base::Pagination, total: i64, row: Vec<T>) -> Self {
-        Page {
-            total,
-            page_num: pagination.page_num,
-            page_size: pagination.page_size,
-            row,
         }
     }
 }

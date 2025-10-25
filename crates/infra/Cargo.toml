@@ -12,8 +12,11 @@ sea-orm = { workspace = true, features = [
     "with-rust_decimal",
     "runtime-tokio",
 ] }
+num_cpus = { workspace = true }
 async-trait = { workspace = true }
 rudi = { workspace = true }
 faststr = { workspace = true, features = ["sea-orm", "serde"] }
+tracing = { workspace = true, features = ["async-await"] }
+chrono = { workspace = true }
 
 common = { path = "../common" }

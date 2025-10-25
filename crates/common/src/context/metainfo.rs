@@ -9,9 +9,7 @@ pub trait BanbridgeMetainfo {
 
 impl BanbridgeMetainfo for MetaInfo {
     fn get_logid(&self) -> Option<super::LogId> {
-        self.get_faststr::<super::LogId>()
-            .cloned()
-            .map(super::LogId::from)
+        self.get_faststr::<super::LogId>().cloned()
     }
     fn set_logid(&mut self, s: super::LogId) {
         self.insert_faststr::<super::LogId>(s)

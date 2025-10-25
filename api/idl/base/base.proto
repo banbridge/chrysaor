@@ -2,39 +2,33 @@ syntax = "proto3";
 
 package base;
 
-import "idl/third_party/validate.proto";
 
-message BaseDTO {
-    string LogID = 1;
+message BaseDto {
+  string LogID = 1;
 
-    map<string, string> Extra = 100;
+  map<string, string> Extra = 100;
 }
 
-message ErrorDTO{
-    int32 CodeN = 1;
-    string Code = 2;
-    string Message = 3;
-    int32 StatusCode = 4;
+message ErrorDto{
+  int32 CodeN = 1;
+  string Code = 2;
+  string Message = 3;
+  int32 StatusCode = 4;
 }
 
-message ResponseMetadataDTO{
-    string RequestID = 1;
+message ResponseMetadataDto{
+  string RequestID = 1;
 
-    optional ErrorDTO Error = 100;
+  optional ErrorDto Error = 100;
 }
 
-message PageReqDTO{
-    int64 PageNum = 1[(validate.rules).int64 = {
-        gt: 0,  // 大于0
-    }];
-    int64 PageSize = 2[(validate.rules).int64 = {
-        gt: 0,  // 大于等于0
-        lte: 200 // 小于等于200
-    }];
+message PageReqDto{
+  int64 PageNum = 1;
+  int64 PageSize = 2;
 }
 
-message PageRespDTO{
-    int64 PageNum = 1;
-    int64 PageSize = 2;
-    int64 Total = 3;
+message PageRespDto{
+  int64 PageNum = 1;
+  int64 PageSize = 2;
+  int64 Total = 3;
 }

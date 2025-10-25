@@ -10,5 +10,3 @@ database:
 jwt:
   secret: xmcnbvjslsdjk
   expiration: 7200 # 过期时间
-  audience: admin # 接收jwt的一方
-  issuer: chrysaor # 签发人

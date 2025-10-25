@@ -9,6 +9,8 @@ pub enum BizCode {
     Internal = 1000000,
     InvalidParam = 1000001,
     UnknownAnyhow = 1000002,
+    RequestNotFound = 1000003,
+    RequestTimeout = 1000004,
 
     ParamBind = 1010001,
     JsonParse = 1010002,
@@ -36,6 +38,8 @@ impl BizCode {
             BizCode::Ok => 200,
             BizCode::Internal => 500,
             BizCode::UnknownAnyhow => 400,
+            BizCode::RequestNotFound => 404,
+            BizCode::RequestTimeout => 500,
 
             BizCode::InvalidParam => 400,
             BizCode::ParamBind => 400,
@@ -77,6 +81,26 @@ impl BizError {
 
     pub fn invalid_param(msg: FastStr) -> Self {
         let biz_code = BizCode::InvalidParam;
+        BizError::new(
+            biz_code.status_code(),
+            msg,
+            biz_code as u32,
+            biz_code.to_string().into(),
+        )
+    }
+
+    pub fn request_not_found(msg: FastStr) -> Self {
+        let biz_code = BizCode::RequestNotFound;
+        BizError::new(
+            biz_code.status_code(),
+            msg,
+            biz_code as u32,
+            biz_code.to_string().into(),
+        )
+    }
+
+    pub fn request_timeout(msg: FastStr) -> Self {
+        let biz_code = BizCode::RequestTimeout;
         BizError::new(
             biz_code.status_code(),
             msg,

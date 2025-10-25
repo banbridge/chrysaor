@@ -1,6 +1,3 @@
-use crate::param;
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
 use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
@@ -20,7 +17,7 @@ impl BizError {
     pub fn new(status_code: u16, message: FastStr, biz_code: u32, biz_msg: FastStr) -> Self {
         BizError {
             status_code,
-            message: message,
+            message,
             biz_code,
             biz_msg,
         }
@@ -28,23 +25,6 @@ impl BizError {
 
     pub fn status_code(&self) -> u16 {
         self.status_code
-    }
-}
-
-impl IntoResponse for BizError {
-    fn into_response(self) -> Response {
-        let staus_code =
-            StatusCode::from_u16(self.status_code()).unwrap_or(StatusCode::BAD_REQUEST);
-
-        let resp_data: param::ApiResponse<()> = param::ApiResponse::err(self);
-
-        (staus_code, axum::Json(resp_data)).into_response()
-    }
-}
-
-impl From<BizError> for Response {
-    fn from(value: BizError) -> Self {
-        value.into_response()
     }
 }
 

@@ -7,9 +7,10 @@ use std::sync::LazyLock;
 const VERSION: &str = "01";
 const CHARSET: &[u8] = b"0123456789ABCDEF";
 
+#[derive(Default)]
 pub struct LogIdGenerator {}
 
-pub static LOG_ID: LazyLock<LogIdGenerator> = LazyLock::new(LogIdGenerator::new);
+pub static LOG_ID: LazyLock<LogIdGenerator> = LazyLock::new(LogIdGenerator::default);
 
 static IP: LazyLock<String> = LazyLock::new(format_ip);
 
@@ -18,11 +19,6 @@ pub fn gen_log_id() -> crate::context::LogId {
 }
 
 impl LogIdGenerator {
-    // 创建一个新的 LogID 生成器
-    pub fn new() -> Self {
-        Self {}
-    }
-
     // 生成一个新的 LogID
     pub fn generate(&self) -> crate::context::LogId {
         const LEN: usize = 63;
@@ -54,7 +50,7 @@ impl LogIdGenerator {
                 16,
             );
         }
-        unsafe { faststr::FastStr::new(std::str::from_utf8_unchecked(&buf.assume_init())) }.into()
+        unsafe { faststr::FastStr::new(std::str::from_utf8_unchecked(&buf.assume_init())) }
     }
 
     // 生成随机部分 (16 位)

@@ -1,6 +1,10 @@
 .PHONY: build
 build:
-	cargo build
+	 cargo build
+
+.PHONY: clean_and_build
+clean_and_build:
+	cargo clean && cargo build
 
 .PHONY: run
 run:

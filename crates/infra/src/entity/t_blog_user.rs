@@ -10,23 +10,15 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: u64,
-    pub created_at: Option<DateTime>,
-    pub updated_at: Option<DateTime>,
+    pub created_at: Option<ChronoDateTimeUtc>,
+    pub updated_at: Option<ChronoDateTimeUtc>,
     #[sea_orm(unique)]
     pub user_id: Option<FastStr>,
     pub nickname: Option<FastStr>,
     #[sea_orm(unique)]
     pub username: Option<FastStr>,
     pub description: Option<FastStr>,
-    pub gender: Option<i32>,
     pub password: Option<FastStr>,
-    pub avatar: Option<FastStr>,
-    pub email: Option<FastStr>,
-    pub tel: Option<FastStr>,
-    pub addr: Option<FastStr>,
-    pub token: Option<FastStr>,
-    pub ip: Option<FastStr>,
-    pub sign_status: Option<i8>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
