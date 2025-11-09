@@ -30,5 +30,7 @@ tracing-subscriber = { workspace = true, features = [
     "json",
 ] }
 derive_builder = { workspace = true }
+backtrace = { workspace = true }
 
 api = { path = "../../api" }
+banbridge_derive = { path = "../banbridge_derive" }

@@ -1,20 +1,20 @@
 use crate::context;
-use crate::error::BizError;
+use crate::error::AppErrorBizBuilder;
 use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 use volo_http::server::extract::Json;
 use volo_http::{http::StatusCode, response::Response, server::IntoResponse};
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Debug)]
 #[serde(rename_all = "PascalCase")]
 struct ResponseMetadata {
     request_id: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    error: Option<BizError>,
+    error: Option<AppErrorBizBuilder>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Debug)]
 #[serde(rename_all = "PascalCase")]
 pub struct ApiResponse<T> {
     response_metadata: ResponseMetadata,
@@ -35,7 +35,7 @@ where
     }
 }
 
-impl IntoResponse for BizError {
+impl IntoResponse for AppErrorBizBuilder {
     fn into_response(self) -> Response {
         ApiResponse::<()>::err(self).into_response()
     }
@@ -59,21 +59,9 @@ where
         }
     }
 
-    pub fn err(err: BizError) -> Self {
+    pub fn err(err: AppErrorBizBuilder) -> Self {
         ApiResponse {
             response_metadata: Self::build_metadata(Some(err)),
-            data: None,
-        }
-    }
-
-    pub fn new_with_code_and_msg(status_code: u16, msg: FastStr, biz_code: u32) -> Self {
-        ApiResponse {
-            response_metadata: Self::build_metadata(Some(BizError::new(
-                status_code,
-                msg,
-                biz_code,
-                FastStr::from("Unknown"),
-            ))),
             data: None,
         }
     }
@@ -81,13 +69,13 @@ where
     fn status_code(&self) -> StatusCode {
         let err = self.response_metadata.error.as_ref();
         if let Some(err) = err {
-            StatusCode::from_u16(err.status_code()).unwrap()
+            StatusCode::from_u16(err.get_http_status()).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
         } else {
             StatusCode::OK
         }
     }
 
-    fn build_metadata(biz_error: Option<BizError>) -> ResponseMetadata {
+    fn build_metadata(biz_error: Option<AppErrorBizBuilder>) -> ResponseMetadata {
         // let log_id = logid::get_or_defalue_logid();
         let log_id = context::get_or_default_log_id();
         ResponseMetadata {

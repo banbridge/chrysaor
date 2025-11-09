@@ -1,4 +1,4 @@
-use common::error::{BizError, BizResult};
+use common::error::{AppErrorBizBuilder, AppResult};
 use common::jwt::{JWT, Principal};
 use lazy_static::lazy_static;
 use std::sync::{Arc, RwLock};
@@ -27,14 +27,16 @@ pub async fn jwt_auth_middleware(
 ) -> impl IntoResponse {
     let token = match req.headers().get(AUTHORIZATION) {
         Some(token) => token.to_str().unwrap_or_default(),
-        None => return BizError::unauthenticated("token is empty".into()).into_response(),
+        None => {
+            return AppErrorBizBuilder::unauthenticated("token is empty".into()).into_response();
+        }
     };
 
-    let principal: BizResult<Principal>;
+    let principal: AppResult<Principal>;
 
     {
         let jwt = GLOBAL_JWT.read().map_err(|e| {
-            BizError::internal(format!("read global jwt error: {}", e.to_string()).into())
+            AppErrorBizBuilder::internal(format!("read global jwt error: {}", e.to_string()).into())
         });
         match jwt {
             Ok(jwt) => {

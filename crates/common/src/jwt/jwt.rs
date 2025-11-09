@@ -1,5 +1,7 @@
-use crate::error::{BizError, BizResult};
-use crate::jwt::{Claim, Principal};
+use crate::{
+    error::{AppErrorBizBuilder, AppResult},
+    jwt::{Claim, Principal},
+};
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, get_current_timestamp,
 };
@@ -47,7 +49,7 @@ impl JWT {
         self
     }
 
-    pub fn encode(&self, principal: Principal) -> BizResult<String> {
+    pub fn encode(&self, principal: Principal) -> AppResult<String> {
         let current_time = get_current_timestamp();
 
         let claim = Claim {
@@ -58,16 +60,19 @@ impl JWT {
             username: principal.username,
         };
 
-        let jwt_token = jsonwebtoken::encode(&self.header, &claim, &self.encode_key)
-            .map_err(|err| BizError::jwt_encode(format!("jwt encode err: {:?}", err).into()))?;
+        let jwt_token =
+            jsonwebtoken::encode(&self.header, &claim, &self.encode_key).map_err(|err| {
+                AppErrorBizBuilder::jwt_encode(format!("jwt encode err: {:?}", err).into())
+            })?;
 
         Ok(jwt_token.into())
     }
 
-    pub fn decode(&self, token: &str) -> BizResult<Principal> {
-        let token_data =
-            jsonwebtoken::decode::<Claim>(token, &self.decode_key, &self.validation)
-                .map_err(|err| BizError::jwt_decode(format!("jwt decode err: {:?}", err).into()))?;
+    pub fn decode(&self, token: &str) -> AppResult<Principal> {
+        let token_data = jsonwebtoken::decode::<Claim>(token, &self.decode_key, &self.validation)
+            .map_err(|err| {
+            AppErrorBizBuilder::jwt_decode(format!("jwt decode err: {:?}", err).into())
+        })?;
 
         Ok(token_data.claims.into())
     }

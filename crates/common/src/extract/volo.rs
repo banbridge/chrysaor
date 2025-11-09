@@ -1,4 +1,4 @@
-use crate::error::BizError;
+use crate::error::AppErrorBizBuilder;
 use crate::param::ApiResponse;
 use serde::de::DeserializeOwned;
 use validator::Validate;
@@ -24,12 +24,13 @@ where
         parts: Parts,
         body: B,
     ) -> Result<Self, Self::Rejection> {
-        let Json(data) = Json::from_request(cx, parts, body)
-            .await
-            .map_err(|err| ApiResponse::err(BizError::param_bind(err.to_string().into())))?;
+        let Json(data) = Json::from_request(cx, parts, body).await.map_err(|err| {
+            ApiResponse::err(AppErrorBizBuilder::param_bind(err.to_string().into()))
+        })?;
 
-        data.validate()
-            .map_err(|err| ApiResponse::err(BizError::invalid_param(err.to_string().into())))?;
+        data.validate().map_err(|err| {
+            ApiResponse::err(AppErrorBizBuilder::invalid_param(err.to_string().into()))
+        })?;
         Ok(Self(data))
     }
 }

@@ -1,16 +1,15 @@
-use crate::error::{BizError, BizResult};
 use faststr::FastStr;
 use std::str::FromStr;
 
+use crate::error::{AppErrorBizBuilder, AppResult};
+
 // 判断字符串是否为空
-pub fn require_non_empty<T>(s: &T, err_msg: &str) -> BizResult<()>
+pub fn require_non_empty<T>(s: &T, err_msg: &str) -> AppResult<()>
 where
     T: AsRef<str>,
 {
     if s.as_ref().is_empty() {
-        return Err(BizError::invalid_param(
-            FastStr::from_str(err_msg).unwrap_or(FastStr::from_str("param is empty").unwrap()),
-        ));
+        return Err(AppErrorBizBuilder::invalid_param(err_msg.to_string()));
     }
     Ok(())
 }
