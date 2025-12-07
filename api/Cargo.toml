@@ -6,12 +6,7 @@ edition = "2024"
 [dependencies]
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
-pilota = { workspace = true }
-volo-grpc = { workspace = true }
-volo = { workspace = true }
 derive_builder = { workspace = true }
 validator = { workspace = true, features = ["derive"] }
 
 [build-dependencies]
-pilota-build = { workspace = true }
-volo-build = { workspace = true }

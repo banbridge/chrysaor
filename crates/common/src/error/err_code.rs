@@ -1,6 +1,6 @@
 use banbridge_derive::BizError;
 
-pub type AppResult<T> = Result<T, AppErrorBizBuilder>;
+pub type AppResult<T> = Result<T, AppErrorBuilt>;
 
 #[derive(Copy, Clone, Debug, BizError)]
 pub enum AppError {

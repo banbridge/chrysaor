@@ -11,7 +11,7 @@ enum BanbridgeError {
 fn main() {
     let code = BanbridgeError::InvalidEmail.get_code();
     println!("{}", code);
-    let c = BanbridgeErrorBizBuilder::invalid_email("sa".to_string());
+    let c = BanbridgeErrorBuilt::invalid_email("sa".to_string());
 
     println!("{:#?}", c);
 }

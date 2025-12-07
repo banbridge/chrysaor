@@ -1,4 +1,4 @@
-use crate::error::{AppErrorBizBuilder, AppResult};
+use crate::error::{AppErrorBuilt, AppResult};
 use faststr::FastStr;
 
 #[allow(unused)]
@@ -7,13 +7,13 @@ pub struct BcryptEncoder;
 impl BcryptEncoder {
     pub fn encode(&self, password: FastStr) -> AppResult<FastStr> {
         let hash_paas = bcrypt::hash(password, bcrypt::DEFAULT_COST)
-            .map_err(|err| AppErrorBizBuilder::bcrypt_failed(err.to_string().into()))?;
+            .map_err(|err| AppErrorBuilt::bcrypt_failed(err.to_string().into()))?;
         Ok(hash_paas.into())
     }
 
     pub fn matches(&self, raw_password: FastStr, encoded_password: FastStr) -> AppResult<bool> {
         bcrypt::verify(raw_password, encoded_password.as_str())
-            .map_err(|err| AppErrorBizBuilder::bcrypt_failed(err.to_string().into()))
+            .map_err(|err| AppErrorBuilt::bcrypt_failed(err.to_string().into()))
     }
 }
 

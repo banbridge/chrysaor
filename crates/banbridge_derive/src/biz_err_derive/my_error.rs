@@ -209,5 +209,5 @@ fn get_enum_method(ident: &Ident, new_ident: &Ident, data_error: &DetailErrorEnu
 }
 
 fn get_struct_indent(ident: &Ident) -> Ident {
-    format_ident!("{}BizBuilder", ident)
+    format_ident!("{}Built", ident)
 }

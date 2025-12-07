@@ -11,13 +11,6 @@ serde = { workspace = true, features = ["derive"] }
 anyhow = { workspace = true }
 config = { workspace = true, features = ["yaml"] }
 tracing = { workspace = true, features = ["async-await"] }
-sea-orm = { workspace = true, features = [
-    "with-chrono",
-    "debug-print",
-    "sqlx-mysql",
-    "with-rust_decimal",
-    "runtime-tokio",
-] }
 
 xid = { workspace = true }
 validator = { workspace = true, features = ["derive"] }
@@ -28,8 +21,6 @@ async-trait = { workspace = true }
 metainfo = { workspace = true }
 faststr = { workspace = true, features = ["sea-orm", "serde"] }
 rudi = { workspace = true }
-volo = { workspace = true }
-volo-http = { workspace = true }
 lazy_static = { workspace = true }
 
 api = { path = "../../api" }

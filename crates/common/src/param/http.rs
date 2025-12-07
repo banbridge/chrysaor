@@ -1,86 +1,102 @@
-use crate::context;
-use crate::error::AppErrorBizBuilder;
-use faststr::FastStr;
-use serde::{Deserialize, Serialize};
-use volo_http::server::extract::Json;
-use volo_http::{http::StatusCode, response::Response, server::IntoResponse};
+use axum::{Json, http::StatusCode, response::IntoResponse};
+use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+use crate::error::{AppErrorBuilt, AppResult};
+
+// #[allow(dead_code)]
+// pub type ApiResult<T> = Result<ApiResponse<T>, ApiError>;
+
+#[allow(dead_code)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "PascalCase")]
-struct ResponseMetadata {
-    request_id: String,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    error: Option<AppErrorBizBuilder>,
-}
-
-#[derive(Serialize, Debug)]
-#[serde(rename_all = "PascalCase")]
-pub struct ApiResponse<T> {
-    response_metadata: ResponseMetadata,
+pub struct ApiResponse<T>
+where
+    T: Serialize,
+{
+    metadata: Metadata,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     data: Option<T>,
 }
 
+#[allow(dead_code)]
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct Metadata {
+    request_id: String,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<AppErrorBuilt>,
+}
+
 impl<T> IntoResponse for ApiResponse<T>
 where
-    T: serde::Serialize,
+    T: Serialize,
 {
-    fn into_response(self) -> Response {
-        let status_code = self.status_code();
-
-        let body = Json(self);
-        (status_code, body).into_response()
+    fn into_response(self) -> axum::response::Response {
+        (self.get_status_code(), Json(&self)).into_response()
     }
 }
 
-impl IntoResponse for AppErrorBizBuilder {
-    fn into_response(self) -> Response {
+impl IntoResponse for AppErrorBuilt {
+    fn into_response(self) -> axum::response::Response {
         ApiResponse::<()>::err(self).into_response()
     }
 }
 
+#[allow(dead_code)]
 impl<T> ApiResponse<T>
 where
-    T: serde::Serialize,
+    T: Serialize,
 {
     pub fn ok() -> Self {
-        ApiResponse {
-            response_metadata: Self::build_metadata(None),
+        Self {
+            metadata: Metadata {
+                request_id: "".to_string(),
+                error: None,
+            },
+            data: None,
+        }
+    }
+
+    pub fn err(err: AppErrorBuilt) -> Self {
+        Self {
+            metadata: Metadata {
+                request_id: "".to_string(),
+                error: Some(err),
+            },
             data: None,
         }
     }
 
     pub fn ok_with_data(data: T) -> Self {
-        ApiResponse {
-            response_metadata: Self::build_metadata(None),
+        Self {
+            metadata: Metadata {
+                request_id: "".to_string(),
+                error: None,
+            },
             data: Some(data),
         }
     }
 
-    pub fn err(err: AppErrorBizBuilder) -> Self {
-        ApiResponse {
-            response_metadata: Self::build_metadata(Some(err)),
-            data: None,
-        }
-    }
-
-    fn status_code(&self) -> StatusCode {
-        let err = self.response_metadata.error.as_ref();
-        if let Some(err) = err {
-            StatusCode::from_u16(err.get_http_status()).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
+    pub fn get_status_code(&self) -> StatusCode {
+        if let Some(err) = &self.metadata.error {
+            let err_status_code = err.get_http_status();
+            StatusCode::from_u16(*err_status_code).unwrap_or(StatusCode::BAD_REQUEST)
         } else {
             StatusCode::OK
         }
     }
+}
 
-    fn build_metadata(biz_error: Option<AppErrorBizBuilder>) -> ResponseMetadata {
-        // let log_id = logid::get_or_defalue_logid();
-        let log_id = context::get_or_default_log_id();
-        ResponseMetadata {
-            request_id: log_id.to_string(),
-            error: biz_error,
+impl<T> From<AppResult<T>> for ApiResponse<T>
+where
+    T: Serialize,
+{
+    fn from(result: AppResult<T>) -> Self {
+        match result {
+            Ok(data) => ApiResponse::ok_with_data(data),
+            Err(err) => ApiResponse::err(err),
         }
     }
 }

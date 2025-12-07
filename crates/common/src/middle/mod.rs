@@ -1,7 +1,3 @@
-mod fail_fallback;
-mod logid;
-mod request;
+mod trace;
 
-pub use fail_fallback::*;
-pub use logid::*;
-pub use request::*;
+pub use trace::*;

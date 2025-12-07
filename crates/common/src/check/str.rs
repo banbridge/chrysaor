@@ -1,7 +1,4 @@
-use faststr::FastStr;
-use std::str::FromStr;
-
-use crate::error::{AppErrorBizBuilder, AppResult};
+use crate::error::AppResult;
 
 // 判断字符串是否为空
 pub fn require_non_empty<T>(s: &T, err_msg: &str) -> AppResult<()>
@@ -9,7 +6,7 @@ where
     T: AsRef<str>,
 {
     if s.as_ref().is_empty() {
-        return Err(AppErrorBizBuilder::invalid_param(err_msg.to_string()));
+        return Err(AppErrorBuilt::invalid_param(err_msg.to_string()));
     }
     Ok(())
 }

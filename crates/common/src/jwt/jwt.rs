@@ -1,5 +1,5 @@
 use crate::{
-    error::{AppErrorBizBuilder, AppResult},
+    error::{AppErrorBuilt, AppResult},
     jwt::{Claim, Principal},
 };
 use jsonwebtoken::{
@@ -62,7 +62,7 @@ impl JWT {
 
         let jwt_token =
             jsonwebtoken::encode(&self.header, &claim, &self.encode_key).map_err(|err| {
-                AppErrorBizBuilder::jwt_encode(format!("jwt encode err: {:?}", err).into())
+                AppErrorBuilt::jwt_encode(format!("jwt encode err: {:?}", err).into())
             })?;
 
         Ok(jwt_token.into())
@@ -71,7 +71,7 @@ impl JWT {
     pub fn decode(&self, token: &str) -> AppResult<Principal> {
         let token_data = jsonwebtoken::decode::<Claim>(token, &self.decode_key, &self.validation)
             .map_err(|err| {
-            AppErrorBizBuilder::jwt_decode(format!("jwt decode err: {:?}", err).into())
+            AppErrorBuilt::jwt_decode(format!("jwt decode err: {:?}", err).into())
         })?;
 
         Ok(token_data.claims.into())
