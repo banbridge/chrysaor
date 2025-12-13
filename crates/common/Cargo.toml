@@ -29,6 +29,20 @@ tracing-subscriber = { workspace = true, features = [
 ] }
 derive_builder = { workspace = true }
 backtrace = { workspace = true }
+bytes = { workspace = true }
+tower-http = { workspace = true, features = [
+    "trace",
+    "timeout",
+    "request-id",
+    "cors",
+    "limit",
+    "normalize-path",
+] }
+tower = { workspace = true }
+http-body-util = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true, features = ["rt"] }
+bytesize = { workspace = true }
 
 api = { path = "../../api" }
 banbridge_derive = { path = "../banbridge_derive" }

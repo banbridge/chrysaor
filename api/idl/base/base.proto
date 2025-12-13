@@ -2,33 +2,32 @@ syntax = "proto3";
 
 package base;
 
-
 message BaseDto {
-  string LogID = 1;
+  string log_id = 1;
 
-  map<string, string> Extra = 100;
+  map<string, string> extra = 100;
 }
 
 message ErrorDto{
-  int32 CodeN = 1;
-  string Code = 2;
-  string Message = 3;
-  int32 StatusCode = 4;
+  int32 code_n = 1;
+  string code = 2;
+  string message = 3;
+  int32 status_code = 4;
 }
 
 message ResponseMetadataDto{
-  string RequestID = 1;
+  string request_id = 1;
 
-  optional ErrorDto Error = 100;
+  optional ErrorDto error = 100;
 }
 
 message PageReqDto{
-  int64 PageNum = 1;
-  int64 PageSize = 2;
+  int64 page_num = 1;
+  int64 page_size = 2;
 }
 
 message PageRespDto{
-  int64 PageNum = 1;
-  int64 PageSize = 2;
-  int64 Total = 3;
+  int64 page_num = 1;
+  int64 page_size = 2;
+  int64 total = 3;
 }

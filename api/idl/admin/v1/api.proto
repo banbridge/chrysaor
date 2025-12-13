@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package v1;
+package idl.admin.v1;v1;
 
 import "idl/admin/v1/user.proto";
+//import "validate/validate.proto";
 
 service AdminService {
   rpc ListUser(ListUserReqDto) returns (ListUserRespDto);

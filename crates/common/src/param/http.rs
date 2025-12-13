@@ -1,14 +1,18 @@
 use axum::{Json, http::StatusCode, response::IntoResponse};
+use faststr::FastStr;
 use serde::Serialize;
 
-use crate::error::{AppErrorBuilt, AppResult};
+use crate::{
+    error::{AppErrorBuilt, AppResult},
+    log_id,
+};
 
 // #[allow(dead_code)]
 // pub type ApiResult<T> = Result<ApiResponse<T>, ApiError>;
 
 #[allow(dead_code)]
 #[derive(Debug, Serialize)]
-#[serde(rename_all = "PascalCase")]
+#[serde(rename_all = "snake_case")]
 pub struct ApiResponse<T>
 where
     T: Serialize,
@@ -21,9 +25,9 @@ where
 
 #[allow(dead_code)]
 #[derive(Debug, Serialize)]
-#[serde(rename_all = "PascalCase")]
+#[serde(rename_all = "snake_case")]
 pub struct Metadata {
-    request_id: String,
+    request_id: FastStr,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<AppErrorBuilt>,
@@ -52,7 +56,7 @@ where
     pub fn ok() -> Self {
         Self {
             metadata: Metadata {
-                request_id: "".to_string(),
+                request_id: log_id::get_or_default_log_id(),
                 error: None,
             },
             data: None,
@@ -61,20 +65,14 @@ where
 
     pub fn err(err: AppErrorBuilt) -> Self {
         Self {
-            metadata: Metadata {
-                request_id: "".to_string(),
-                error: Some(err),
-            },
+            metadata: Self::build_metadata(Some(err)),
             data: None,
         }
     }
 
     pub fn ok_with_data(data: T) -> Self {
         Self {
-            metadata: Metadata {
-                request_id: "".to_string(),
-                error: None,
-            },
+            metadata: Self::build_metadata(None),
             data: Some(data),
         }
     }
@@ -82,9 +80,16 @@ where
     pub fn get_status_code(&self) -> StatusCode {
         if let Some(err) = &self.metadata.error {
             let err_status_code = err.get_http_status();
-            StatusCode::from_u16(*err_status_code).unwrap_or(StatusCode::BAD_REQUEST)
+            StatusCode::from_u16(err_status_code).unwrap_or(StatusCode::BAD_REQUEST)
         } else {
             StatusCode::OK
+        }
+    }
+
+    fn build_metadata(err: Option<AppErrorBuilt>) -> Metadata {
+        Metadata {
+            error: err,
+            request_id: log_id::get_or_default_log_id(),
         }
     }
 }

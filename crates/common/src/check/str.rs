@@ -1,4 +1,4 @@
-use crate::error::AppResult;
+use crate::error::{AppErrorBuilt, AppResult};
 
 // 判断字符串是否为空
 pub fn require_non_empty<T>(s: &T, err_msg: &str) -> AppResult<()>

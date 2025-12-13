@@ -1,5 +1,5 @@
 use get_if_addrs::get_if_addrs;
-use rand::{rngs::ThreadRng, Rng};
+use rand::{Rng, rngs::ThreadRng};
 use std::mem::MaybeUninit;
 use std::net::IpAddr;
 use std::sync::LazyLock;
@@ -50,7 +50,7 @@ impl LogIdGenerator {
                 16,
             );
         }
-        unsafe { faststr::FastStr::new(std::str::from_utf8_unchecked(&buf.assume_init())) }
+        unsafe { faststr::FastStr::new(std::str::from_utf8_unchecked(&buf.assume_init())) }.into()
     }
 
     // 生成随机部分 (16 位)
@@ -102,12 +102,14 @@ fn get_local_ip() -> Option<IpAddr> {
 
 #[cfg(test)]
 mod tests {
+    use std::ops::Deref;
+
     use super::*;
 
     #[test]
     fn test_log_id() {
         let log_id = LOG_ID.generate();
-        println!("{}", log_id);
+        println!("log_id: {}", log_id.deref());
         //assert_eq!(log_id.len(), 53);
     }
 
