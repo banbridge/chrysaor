@@ -1,14 +1,23 @@
-CREATE TABLE `t_blog_user` (
-    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    `user_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '用户ID',
-    `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '用户昵称',
-    `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '用户名称',
-    `description` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '描述',
-    `password` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '密码',
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    `aosp_version` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'aosp版本',
-    PRIMARY KEY (`id`),
-    KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='用户'
+create table t_users
+(
+    id         bigserial,
+    username   varchar(128)                                       not null,
+    user_id    varchar(128)                                       not null,
+    nickname   varchar(128),
+    created_at timestamp with time zone                           not null,
+    updated_at timestamp with time zone default CURRENT_TIMESTAMP not null
+);
+
+comment on column t_users.id is 'ID';
+comment on column t_users.username is '用户名称';
+comment on column t_users.user_id is '用户ID';
+comment on column t_users.nickname is '用户昵称';
+comment on column t_users.created_at is '创建时间';
+comment on column t_users.updated_at is '更新时间';
+
+create unique index idx_user_id
+    on t_users (user_id);
+
+create unique index t_users_pkey
+    on t_users (id);
 

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package admin.v1;
+
+
+import "api/proto/third_party/validate.proto";
+import "api/proto/base/base.proto";
+
+message ListUserReq{
+  optional string Username = 1[(validate.rules).string={
+    min_len: 1,
+    max_len: 20,
+  }];
+  optional string UserId = 2;
+
+  optional base.PageReq Page = 3;
+}
+
+
+message LoginReq{
+  string QueryKey = 1;
+  string Password = 2;
+}
+
+message User{
+  string Username = 1;
+  string UserId = 2;
+  int32 Age = 3;
+  string Email = 4;
+  string Phone = 5;
+}
+
+message ListUserResult{
+  repeated User Eow = 1;
+
+  int64 Total = 99;
+}
+
+message ListUserResp{
+  base.ResponseMetadata ResponseMetadata = 1;
+  ListUserResult Result = 2;
+}
+
+message LoginResult{
+  string Token = 1;
+}
+
+message LoginResp{
+  base.ResponseMetadata ResponseMetadata = 1;
+  LoginResult Result = 2;
+}

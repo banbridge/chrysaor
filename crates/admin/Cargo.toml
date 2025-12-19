@@ -8,7 +8,6 @@ axum = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 serde_json = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
-anyhow = { workspace = true }
 config = { workspace = true, features = ["yaml"] }
 tracing = { workspace = true, features = ["async-await"] }
 
@@ -22,6 +21,11 @@ metainfo = { workspace = true }
 faststr = { workspace = true, features = ["sea-orm", "serde"] }
 rudi = { workspace = true }
 lazy_static = { workspace = true }
+sea-orm = { workspace = true }
+dotenv = { workspace = true }
+getset = { workspace = true }
+axum-extra = { workspace = true, features = ["typed-header"] }
+
 
 api = { path = "../../api" }
 infra = { path = "../infra" }

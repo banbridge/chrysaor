@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package base;
+
+message Base {
+  string RequestId = 1;
+
+  map<string, string> Extra = 100;
+}
+
+message Error{
+  int32 CodeN = 1;
+  string Code = 2;
+  string Message = 3;
+  int32 StatusCode = 4;
+}
+
+message ResponseMetadata{
+  string RequestId = 1;
+
+  optional Error Error = 100;
+}
+
+message PageReq{
+  int64 PageNum = 1;
+  int64 PageSize = 2;
+}
+
+message PageResp{
+  int64 PageNum = 1;
+  int64 PageSize = 2;
+  int64 Total= 3;
+}

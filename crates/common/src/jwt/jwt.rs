@@ -1,39 +1,30 @@
 use crate::{
     error::{AppErrorBuilt, AppResult},
-    jwt::{Claim, Principal},
+    jwt::Claim,
 };
+use faststr::FastStr;
 use jsonwebtoken::{
-    Algorithm, DecodingKey, EncodingKey, Header, Validation, get_current_timestamp,
+    get_current_timestamp, Algorithm, DecodingKey, EncodingKey, Header, Validation,
 };
+use serde::{de::DeserializeOwned, Serialize};
 use std::time::Duration;
 
-#[derive(Clone)]
-pub struct JWT {
+#[derive(Clone, Debug)]
+pub struct JWTManager {
     encode_key: EncodingKey,
     decode_key: DecodingKey,
 
     header: Header,
     validation: Validation,
     expiration: Duration,
+    issuer: FastStr,
 }
 
-// impl Display for JWT {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!(
-//             f,
-//             "JWT   header: {:?}, validation: {:?}, expiration: {:?} ",
-//             self.header,
-//             self.validation,
-//             self.expiration.as_secs(),
-//         )
-//     }
-// }
-
-impl JWT {
-    pub fn new(encode_key: &str, expiration_second: u64) -> Self {
+impl JWTManager {
+    pub fn new(encode_key: &str, expiration_second: u64, issuer: &str) -> Self {
         let mut validation = Validation::new(Algorithm::HS256);
         validation.set_audience(&["me"]);
-        validation.set_required_spec_claims(&["exp", "sub", "iat"]);
+        validation.set_required_spec_claims(&["exp", "user", "iat"]);
 
         Self {
             encode_key: EncodingKey::from_secret(encode_key.as_bytes()),
@@ -41,6 +32,7 @@ impl JWT {
             header: Header::new(Algorithm::HS256),
             validation,
             expiration: Duration::from_secs(expiration_second),
+            issuer: FastStr::from_string(issuer.to_string()),
         }
     }
 
@@ -49,15 +41,17 @@ impl JWT {
         self
     }
 
-    pub fn encode(&self, principal: Principal) -> AppResult<String> {
+    pub fn encode<T>(&self, principal: T) -> AppResult<String>
+    where
+        T: Serialize + Clone + DeserializeOwned,
+    {
         let current_time = get_current_timestamp();
 
         let claim = Claim {
-            sub: principal.user_id,
             exp: current_time.saturating_add(self.expiration.as_secs()),
             iat: current_time,
-
-            username: principal.username,
+            user: principal,
+            iss: self.issuer.clone(),
         };
 
         let jwt_token =
@@ -68,33 +62,33 @@ impl JWT {
         Ok(jwt_token.into())
     }
 
-    pub fn decode(&self, token: &str) -> AppResult<Principal> {
-        let token_data = jsonwebtoken::decode::<Claim>(token, &self.decode_key, &self.validation)
-            .map_err(|err| {
-            AppErrorBuilt::jwt_decode(format!("jwt decode err: {:?}", err).into())
-        })?;
+    pub fn decode<T>(&self, token: &str) -> AppResult<T>
+    where
+        T: Serialize + Clone + DeserializeOwned,
+    {
+        let token_data =
+            jsonwebtoken::decode::<Claim<T>>(token, &self.decode_key, &self.validation).map_err(
+                |err| AppErrorBuilt::jwt_decode(format!("jwt decode err: {:?}", err).into()),
+            )?;
 
-        Ok(token_data.claims.into())
+        Ok(token_data.claims.user)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use jsonwebtoken::{decode, encode};
     use serde::{Deserialize, Serialize};
 
     #[derive(Debug, Serialize, Deserialize, Clone)]
-    struct Claims {
-        aud: String,
-        sub: Principal,
-        company: String,
-        exp: u64,
+    pub struct Principal {
+        user_id: String,
+        username: String,
     }
 
     #[test]
     fn test_jwt() {
-        let jwt = JWT::new("secret", 3600);
+        let jwt = JWTManager::new("secret", 3600, "admin");
 
         let p = Principal {
             user_id: "b@b.com".to_string(),
@@ -103,7 +97,7 @@ mod tests {
         let token = jwt.encode(p).unwrap();
         println!("{}", token);
 
-        let p = jwt.decode(&token);
+        let p = jwt.decode::<Principal>(&token);
         println!("{:?}", p);
     }
 }

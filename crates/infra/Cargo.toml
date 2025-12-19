@@ -5,12 +5,17 @@ edition = "2024"
 
 [dependencies]
 serde = { workspace = true, features = ["derive"] }
-
 num_cpus = { workspace = true }
 async-trait = { workspace = true }
-rudi = { workspace = true }
 faststr = { workspace = true, features = ["sea-orm", "serde"] }
 tracing = { workspace = true, features = ["async-await"] }
 chrono = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+sea-orm = { workspace = true, features = ["runtime-tokio-rustls", "sqlx-postgres"] }
+dotenv = { workspace = true }
+anyhow = { workspace = true }
+rust-embed = { workspace = true }
+casbin = { workspace = true }
+getset = { workspace = true }
 
 common = { path = "../common" }

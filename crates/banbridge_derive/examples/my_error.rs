@@ -16,7 +16,7 @@ fn main() {
     println!("{:#?}", c);
 }
 
-fn print_stack() {
-    let a = backtrace::Backtrace::new();
-    println!("{:?}", a);
-}
+// fn print_stack() {
+//     let a = backtrace::Backtrace::new();
+//     println!("{:?}", a);
+// }

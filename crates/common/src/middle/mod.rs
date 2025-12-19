@@ -1,7 +1,9 @@
+mod global_404;
 mod log_id;
 mod request_timer;
 mod trace;
 
+pub use global_404::*;
 pub use request_timer::*;
 pub use trace::*;
 

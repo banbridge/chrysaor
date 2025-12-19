@@ -5,15 +5,12 @@ edition = "2024"
 
 [dependencies]
 serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
+
 tracing = { workspace = true }
 rand = { workspace = true }
-chrono = { workspace = true }
-lazy_static = { workspace = true }
-thiserror = { workspace = true }
-validator = { workspace = true, features = ["derive"] }
-jsonwebtoken = { workspace = true, features = ["rust_crypto"] }
 anyhow = { workspace = true }
+
+jsonwebtoken = { workspace = true, features = ["rust_crypto"] }
 bcrypt = { workspace = true }
 get_if_addrs = { workspace = true }
 itoa = { workspace = true }
@@ -27,7 +24,7 @@ tracing-subscriber = { workspace = true, features = [
     "chrono",
     "json",
 ] }
-derive_builder = { workspace = true }
+
 backtrace = { workspace = true }
 bytes = { workspace = true }
 tower-http = { workspace = true, features = [
@@ -43,6 +40,7 @@ http-body-util = { workspace = true }
 axum = { workspace = true }
 tokio = { workspace = true, features = ["rt"] }
 bytesize = { workspace = true }
+config = { workspace = true }
 
 api = { path = "../../api" }
 banbridge_derive = { path = "../banbridge_derive" }

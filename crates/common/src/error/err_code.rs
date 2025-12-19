@@ -1,4 +1,5 @@
 use banbridge_derive::BizError;
+use tracing::warn;
 
 pub type AppResult<T> = Result<T, AppErrorBuilt>;
 
@@ -73,4 +74,18 @@ pub enum AppError {
     DBInsertFailed, // 插入数据库失败
     #[detail(code = 1030005, http_status = 500, message_zh = "数据库删除失败")]
     DBDeleteFailed, // 删除数据库失败
+    #[detail(code = 1030006, http_status = 500, message_zh = "数据库连接失败")]
+    DBConnectionFailed,
+    #[detail(code = 1030007, http_status = 500, message_zh = "数据库事务开启")]
+    DBTransactionBeginFailed,
+    #[detail(code = 1030008, http_status = 500, message_zh = "数据库事务提交失败")]
+    DBTransactionCommitFailed,
+}
+
+impl AppErrorBuilt {
+    pub fn print_stack(self) -> Self {
+        let stack = backtrace::Backtrace::new();
+        warn!("{:#?}", stack);
+        self
+    }
 }

@@ -9,9 +9,9 @@ pub trait ChrysaorMetaInfo {
 impl ChrysaorMetaInfo for MetaInfo {
     #[inline]
     fn get_log_id(&self) -> Option<super::LogId> {
-        self.get_faststr::<super::LogId>()
-            .cloned()
-            .map(super::LogId::from)
+        self.get_faststr::<super::LogId>().map(|l| l.to_owned())
+        // .cloned()
+        // .map(super::LogId::from)
     }
 
     #[inline]

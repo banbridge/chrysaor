@@ -1,4 +1,4 @@
-use axum::{Json, http::StatusCode, response::IntoResponse};
+use axum::{http::StatusCode, response::IntoResponse, Json};
 use faststr::FastStr;
 use serde::Serialize;
 
@@ -12,7 +12,7 @@ use crate::{
 
 #[allow(dead_code)]
 #[derive(Debug, Serialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "PascalCase")]
 pub struct ApiResponse<T>
 where
     T: Serialize,
@@ -25,7 +25,7 @@ where
 
 #[allow(dead_code)]
 #[derive(Debug, Serialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "PascalCase")]
 pub struct Metadata {
     request_id: FastStr,
 
