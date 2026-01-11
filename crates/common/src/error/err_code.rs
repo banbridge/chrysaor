@@ -21,6 +21,18 @@ pub enum AppError {
     RequestNotFound,
     #[detail(code = 1000004, http_status = 408, message_zh = "请求超时")]
     RequestTimeout,
+    #[detail(
+        code = 1000005,
+        http_status = 400,
+        message_zh = "必传参数未设置，请检查请求参数"
+    )]
+    UninitializedFieldError,
+    #[detail(
+        code = 1000006,
+        http_status = 400,
+        message_zh = "参数验证失败，请检查对应参数"
+    )]
+    ValidateParamFailed,
 
     #[detail(
         code = 1010000,

@@ -1,9 +1,8 @@
-use super::GLOBAL_JWT;
 use crate::app::AdminService;
-use axum::{extract::FromRequestParts, http::request::Parts, routing::get, RequestPartsExt};
+use axum::{RequestPartsExt, extract::FromRequestParts, http::request::Parts};
 use axum_extra::{
-    headers::{authorization::Bearer, Authorization},
     TypedHeader,
+    headers::{Authorization, authorization::Bearer},
 };
 use common::error::{AppErrorBuilt, AppResult};
 use faststr::FastStr;
@@ -31,18 +30,18 @@ where
     type Rejection = AppErrorBuilt;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> AppResult<Self> {
+        // Extract the token from the authorization header
+        let TypedHeader(Authorization(bearer)) = parts
+            .extract::<TypedHeader<Authorization<Bearer>>>()
+            .await
+            .map_err(|e| AppErrorBuilt::jwt_invalid_token(format!("extract jwt failed {}", e)))?;
+
         let admin_svc = parts
             .extensions
             .get::<AdminService>()
             .ok_or(AppErrorBuilt::invalid_param("service not init".to_string()))?;
 
         // todo 权限校验
-
-        // Extract the token from the authorization header
-        let TypedHeader(Authorization(bearer)) = parts
-            .extract::<TypedHeader<Authorization<Bearer>>>()
-            .await
-            .map_err(|e| AppErrorBuilt::jwt_invalid_token(format!("extract jwt failed {}", e)))?;
 
         // Decode the user data
         let token_data = admin_svc.jwt_manager.decode::<User>(bearer.token())?;

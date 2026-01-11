@@ -41,6 +41,8 @@ axum = { workspace = true }
 tokio = { workspace = true, features = ["rt"] }
 bytesize = { workspace = true }
 config = { workspace = true }
+derive_builder = { workspace = true }
+validator = { workspace = true }
 
 api = { path = "../../api" }
 banbridge_derive = { path = "../banbridge_derive" }
