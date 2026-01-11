@@ -1,40 +1,9 @@
 use std::sync::Arc;
 
+use crate::biz::login::LoginCommandService;
 use crate::conf::AdminConfig;
-use crate::util::User;
-use axum::routing::post;
-use axum::{middleware, Extension, Router};
-use common::{context::init_logger, middle, util};
+use common::context::init_logger;
 use infra::casbin_auth::CasbinManager;
-use sea_orm::Iden;
-use tracing::info;
-
-#[rudi::Singleton]
-pub async fn run(#[di(name = "admin_service")] admin_service: Arc<AdminService>) {
-    //println!("{:?}", config);
-
-    let router = Router::new().route("/hello", post(hello));
-
-    let router = router.fallback(middle::handler_404);
-
-    let app = middle::add_middleware_list(router).layer(Extension(admin_service.clone()));
-
-    let port = admin_service.config.get_server_port();
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:}", port))
-        .await
-        .unwrap();
-
-    info!("admin service start at: {}", port);
-
-    axum::serve(listener, app)
-        .with_graceful_shutdown(util::shutdown_signal())
-        .await
-        .unwrap();
-}
-
-pub async fn hello(user: User) -> String {
-    "hello".to_string()
-}
 
 #[derive(Clone)]
 #[rudi::Singleton(async, name = "admin_service", binds=[Self::into_admin_service])]
@@ -51,6 +20,9 @@ pub struct AdminService {
 
     #[di(name = "casbin_manager")]
     pub casbin_manager: Arc<CasbinManager>,
+
+    #[di(name = "login_command_service")]
+    pub login_command_service: Arc<LoginCommandService>,
 }
 
 impl AdminService {

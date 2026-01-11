@@ -20,13 +20,12 @@ async-trait = { workspace = true }
 metainfo = { workspace = true }
 faststr = { workspace = true, features = ["sea-orm", "serde"] }
 rudi = { workspace = true }
-lazy_static = { workspace = true }
 sea-orm = { workspace = true }
 dotenv = { workspace = true }
 getset = { workspace = true }
 axum-extra = { workspace = true, features = ["typed-header"] }
+derive_builder = { workspace = true }
 
-
-api = { path = "../../api" }
+api = { path = "../../api", features = ["admin-v1"] }
 infra = { path = "../infra" }
 common = { path = "../common" }
