@@ -4,14 +4,45 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axum = {workspace = true}
-serde = {workspace = true, features = ["derive"]}
-serde_json = {workspace = true}
-tracing = {workspace = true}
-rand ={workspace = true}
-chrono = {workspace = true}
-lazy_static = {workspace = true}
-thiserror = {workspace = true}
-validator = {workspace = true,features = ["derive"] }
-jsonwebtoken = {workspace = true}
-anyhow = {workspace = true}
+serde = { workspace = true, features = ["derive"] }
+
+tracing = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+
+jsonwebtoken = { workspace = true, features = ["rust_crypto"] }
+bcrypt = { workspace = true }
+get_if_addrs = { workspace = true }
+itoa = { workspace = true }
+coarsetime = { workspace = true }
+hex = { workspace = true }
+faststr = { workspace = true, features = ["serde"] }
+yit_id_generator = { workspace = true }
+metainfo = { workspace = true }
+tracing-subscriber = { workspace = true, features = [
+    "env-filter",
+    "chrono",
+    "json",
+] }
+
+backtrace = { workspace = true }
+bytes = { workspace = true }
+tower-http = { workspace = true, features = [
+    "trace",
+    "timeout",
+    "request-id",
+    "cors",
+    "limit",
+    "normalize-path",
+] }
+tower = { workspace = true }
+http-body-util = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true, features = ["rt"] }
+bytesize = { workspace = true }
+config = { workspace = true }
+derive_builder = { workspace = true }
+validator = { workspace = true }
+
+api = { path = "../../api" }
+banbridge_derive = { path = "../banbridge_derive" }

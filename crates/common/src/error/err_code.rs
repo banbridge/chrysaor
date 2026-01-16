@@ -1,96 +1,103 @@
-use crate::error::BizError;
+use banbridge_derive::BizError;
+use tracing::warn;
 
-#[derive(Copy, Clone)]
-pub enum BizCode {
-    Ok = 0,
+pub type AppResult<T> = Result<T, AppErrorBuilt>;
 
-    Internal = 1000000,
-    InvalidParam = 1000001,
-    UnknownAnyhow = 1000002,
+#[derive(Copy, Clone, Debug, BizError)]
+pub enum AppError {
+    #[detail(code = 0, http_status = 200)]
+    Ok,
+    #[detail(code = 1000000, http_status = 500, message_zh = "内部通用错误")]
+    Internal,
+    #[detail(
+        code = 1000001,
+        http_status = 400,
+        message_zh = "请求参数错误，请仔细核对参数有效性"
+    )]
+    InvalidParam,
+    #[detail(code = 1000002, http_status = 500, message_zh = "未知错误")]
+    UnknownAnyhow,
+    #[detail(code = 1000003, http_status = 404, message_zh = "请求资源不存在")]
+    RequestNotFound,
+    #[detail(code = 1000004, http_status = 408, message_zh = "请求超时")]
+    RequestTimeout,
+    #[detail(
+        code = 1000005,
+        http_status = 400,
+        message_zh = "必传参数未设置，请检查请求参数"
+    )]
+    UninitializedFieldError,
+    #[detail(
+        code = 1000006,
+        http_status = 400,
+        message_zh = "参数验证失败，请检查对应参数"
+    )]
+    ValidateParamFailed,
 
-    ParamBind = 1010001,
-    JsonParse = 1010002,
-    JsonSerde = 1010003,
+    #[detail(
+        code = 1010000,
+        http_status = 400,
+        message_zh = "从请求中解析参数错误，请检查对应参数"
+    )]
+    ParamBind,
+    #[detail(
+        code = 1010001,
+        http_status = 400,
+        message_zh = "JSON解析出错，请检查json格式"
+    )]
+    JsonParse,
+    #[detail(
+        code = 1010002,
+        http_status = 400,
+        message_zh = "JSON序列化错误，请检查对应参数"
+    )]
+    JsonSerde,
+    #[detail(code = 1010003, http_status = 500, message_zh = "BCrypt 加密失败")]
+    BcryptFailed,
 
     // auth 相关错误码
-    JwtInvalidToken = 1020001, // auth 无效
-    Unauthenticated = 1020002, // 未授权
-    JwtDecode = 1020003,
+    #[detail(code = 1020000, http_status = 401, message_zh = "JWT Token 无效")]
+    JwtInvalidToken, // auth 无效
+    #[detail(
+        code = 1020001,
+        http_status = 401,
+        message_zh = "用户未登录或Token失效"
+    )]
+    Unauthenticated, // 未授权
+    #[detail(code = 1020002, http_status = 401, message_zh = "Token无效或已过期")]
+    JwtDecode,
+    #[detail(
+        code = 1020003,
+        http_status = 401,
+        message_zh = "Token编码失败，请检查对应参数"
+    )]
     JwtEncode = 1020004,
+
+    // 数据库相关错误吗
+    #[detail(code = 1030000, http_status = 500, message_zh = "数据库错误")]
+    DBCommon, // 数据库错误
+    #[detail(code = 1030001, http_status = 404, message_zh = "数据库记录未找到")]
+    DBNotFound, // 数据库未找到
+    #[detail(code = 1030002, http_status = 500, message_zh = "数据库查询失败")]
+    DBQueryFailed, // 数据库查询失败
+    #[detail(code = 1030003, http_status = 500, message_zh = "数据库更新失败")]
+    DBUpdateFailed, // 数据库更新失败
+    #[detail(code = 1030004, http_status = 500, message_zh = "数据库插入失败")]
+    DBInsertFailed, // 插入数据库失败
+    #[detail(code = 1030005, http_status = 500, message_zh = "数据库删除失败")]
+    DBDeleteFailed, // 删除数据库失败
+    #[detail(code = 1030006, http_status = 500, message_zh = "数据库连接失败")]
+    DBConnectionFailed,
+    #[detail(code = 1030007, http_status = 500, message_zh = "数据库事务开启")]
+    DBTransactionBeginFailed,
+    #[detail(code = 1030008, http_status = 500, message_zh = "数据库事务提交失败")]
+    DBTransactionCommitFailed,
 }
 
-impl BizCode {
-    pub fn status_code(&self) -> u16 {
-        match self {
-            BizCode::Ok => 200,
-            BizCode::Internal => 500,
-            BizCode::UnknownAnyhow => 400,
-
-            BizCode::InvalidParam => 400,
-            BizCode::ParamBind => 400,
-            BizCode::JsonParse => 400,
-            BizCode::JsonSerde => 400,
-
-            BizCode::JwtInvalidToken => 401,
-            BizCode::Unauthenticated => 403,
-            BizCode::JwtDecode => 401,
-            BizCode::JwtEncode => 401,
-        }
-    }
-}
-
-impl BizError {
-    pub fn internal(msg: &str) -> Self {
-        let biz_code = BizCode::Internal;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn invalid_param(msg: &str) -> Self {
-        let biz_code = BizCode::InvalidParam;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn param_bind(msg: &str) -> Self {
-        let biz_code = BizCode::ParamBind;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn json_parse(msg: &str) -> Self {
-        let biz_code = BizCode::JsonParse;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn json_serde(msg: &str) -> Self {
-        let biz_code = BizCode::JsonSerde;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn jwt_invalid_token(msg: &str) -> Self {
-        let biz_code = BizCode::JwtInvalidToken;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn unauthenticated(msg: &str) -> Self {
-        let biz_code = BizCode::Unauthenticated;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn unknown_anyhow(err: anyhow::Error) -> Self {
-        let biz_code = BizCode::UnknownAnyhow;
-        BizError::new(
-            biz_code.status_code(),
-            format!("{:?}", err).as_str(),
-            biz_code as u32,
-        )
-    }
-
-    pub fn jwt_encode(msg: &str) -> Self {
-        let biz_code = BizCode::JwtEncode;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
-    }
-
-    pub fn jwt_decode(msg: &str) -> Self {
-        let biz_code = BizCode::JwtDecode;
-        BizError::new(biz_code.status_code(), msg, biz_code as u32)
+impl AppErrorBuilt {
+    pub fn print_stack(self) -> Self {
+        let stack = backtrace::Backtrace::new();
+        warn!("{:#?}", stack);
+        self
     }
 }

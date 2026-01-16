@@ -1,46 +1,71 @@
-use crate::service::service::AdminService;
-use crate::usercase::uc::AdminUsecase;
-use crate::{conf, data, server, service};
-use axum::debug_handler;
-use axum::extract::State;
-use common::param::{ApiResponse, ApiResult};
 use std::sync::Arc;
-use tracing_subscriber::EnvFilter;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
 
-pub async fn run() -> anyhow::Result<()> {
-    let config = conf::AppConf::load("config/admin/app", config::FileFormat::Yaml)?;
+use crate::biz::login::LoginCommandService;
+use crate::conf::AdminConfig;
+use common::context::init_logger;
+use infra::casbin_auth::CasbinManager;
 
-    println!("{:?}", config);
+#[derive(Clone)]
+#[rudi::Singleton(async, name = "admin_service", binds=[Self::into_admin_service])]
+pub struct AdminService {
+    #[di(name = "config")]
+    pub config: Arc<AdminConfig>,
+    // #[di(name = "login_controller")]
+    // pub login_controller: Arc<LoginController>,
+    #[di(name = "pg_db")]
+    pub pg_db: Arc<sea_orm::DatabaseConnection>,
 
-    init_logger(&config);
+    #[di(name = "jwt_manager")]
+    pub jwt_manager: Arc<common::jwt::JWTManager>,
 
-    let data = data::Data::new(&config).await?;
+    #[di(name = "casbin_manager")]
+    pub casbin_manager: Arc<CasbinManager>,
 
-    let admin_uc = Arc::new(AdminUsecase::new(&data));
-
-    let admin_service = AdminService::new(&config, admin_uc);
-
-    let server = server::Server::new(&config);
-
-    let router = service::create_router();
-
-    server.start(admin_service, router).await?;
-
-    Ok(())
+    #[di(name = "login_command_service")]
+    pub login_command_service: Arc<LoginCommandService>,
 }
 
-pub fn init_logger(conf: &conf::AppConf) {
-    tracing_subscriber::registry()
-        .with(EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")))
-        .with(
-            tracing_subscriber::fmt::layer()
-                .with_file(true)
-                .with_line_number(true)
-                .with_thread_ids(true)
-                .with_line_number(true)
-                .with_target(false),
-        )
-        .init()
+impl AdminService {
+    fn into_admin_service(self) -> Arc<Self> {
+        Arc::new(self)
+    }
+}
+
+#[rudi::Singleton(name = "config")]
+pub fn get_config() -> Arc<AdminConfig> {
+    dotenv::dotenv().ok();
+
+    let conf_info = AdminConfig::load().unwrap();
+
+    init_logger();
+
+    Arc::new(conf_info)
+}
+
+#[rudi::Singleton(name = "pg_db")]
+async fn init_db(
+    #[di(name = "config")] conf: Arc<AdminConfig>,
+) -> Arc<sea_orm::DatabaseConnection> {
+    let db = infra::conn::get_postgresql_db(conf.get_db_dsn().as_str())
+        .await
+        .unwrap();
+
+    Arc::new(db)
+}
+
+#[rudi::Singleton(name = "jwt_manager")]
+async fn init_jwt_manager(
+    #[di(name = "config")] conf: Arc<AdminConfig>,
+) -> Arc<common::jwt::JWTManager> {
+    Arc::new(conf.get_jwt())
+}
+
+#[rudi::Singleton(name = "casbin_manager")]
+async fn init_casbin_manager(
+    #[di(name = "pg_db")] db: Arc<sea_orm::DatabaseConnection>,
+) -> Arc<CasbinManager> {
+    let res = CasbinManager::new(db.as_ref().clone())
+        .await
+        .expect("init casbin manager failed");
+    Arc::new(res)
 }

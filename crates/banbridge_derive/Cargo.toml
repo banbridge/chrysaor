@@ -1,0 +1,18 @@
+[package]
+name = "banbridge_derive"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true, features = ["full"] }
+quote = { workspace = true }
+darling = { workspace = true }
+proc-macro2 = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+backtrace = { workspace = true }
+unescaper = { workspace = true }
+heck = { workspace = true }

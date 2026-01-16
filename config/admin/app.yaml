@@ -1,14 +1,5 @@
 server:
   port: 8091
-
-database:
-  user: root
-  password: 12345678
-  host: 127.0.0.1
-  port: 3306
-  db: gyb
 jwt:
-  secret: xmcnbvjslsdjk
   expiration: 7200 # 过期时间
-  audience: admin # 接收jwt的一方
-  issuer: chrysaor # 签发人
+  issuer: banbridge

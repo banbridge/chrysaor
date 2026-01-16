@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package admin.v1;
+
+import "api/proto/admin/v1/user.proto";
+//import "validate/validate.proto";
+
+service AdminService {
+  rpc ListUser(ListUserReq) returns (ListUserResp);
+  rpc Login(LoginReq) returns (LoginResp);
+}

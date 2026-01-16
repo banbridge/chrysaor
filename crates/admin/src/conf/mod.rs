@@ -1,71 +1,33 @@
-use anyhow::Context;
-use config::FileFormat;
-use serde::Deserialize;
+mod model;
 
-#[derive(Debug, Deserialize, Clone)]
-pub struct AppConf {
-    server: ServerConf,
-    database: DatabaseConf,
-    jwt: JwtConf,
-}
+pub use model::Config as AdminConfig;
 
-#[derive(Debug, Deserialize, Clone)]
-struct ServerConf {
-    port: Option<u32>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct DatabaseConf {
-    user: String,
-    password: String,
-    host: String,
-    port: u32,
-    db: String,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct JwtConf {
-    pub secret: String,
-    pub expiration: u64,  // 过期时间
-    pub audience: String, // 接收jwt的一方
-    pub issuer: String,   // 签发人
-}
-
-impl AppConf {
-    pub fn load(file_name: &str, format: FileFormat) -> anyhow::Result<Self> {
-        config::Config::builder()
-            .add_source(
-                config::File::with_name(file_name)
-                    .format(format)
-                    .required(true),
-            )
-            .add_source(
-                config::Environment::with_prefix("APP")
-                    .separator("_")
-                    .try_parsing(true),
-            )
-            .build()
-            .with_context(|| "load app conf failed")?
-            .try_deserialize()
-            .with_context(|| "failed to deserialize app conf")
+use common::{error::AppResult, jwt, util};
+impl AdminConfig {
+    pub fn load() -> AppResult<Self> {
+        util::load_config::<AdminConfig>("config/admin/app.yaml", config::FileFormat::Yaml)
     }
 
-    pub fn server_port(&self) -> u32 {
-        self.server.port.unwrap_or(8089)
-    }
-
-    pub fn mysql_dsn(&self) -> String {
+    pub fn get_db_dsn(&self) -> String {
         format!(
-            "mysql://{}:{}@{}:{}/{}?charset=utf8mb4&parseTime=True&loc=Local",
-            self.database.user,
-            self.database.password,
-            self.database.host,
-            self.database.port,
-            self.database.db
+            "postgres://{}:{}@{}:{}/{}",
+            self.postgres.user,
+            self.postgres.password,
+            self.postgres.host,
+            self.postgres.port,
+            self.postgres.db_name,
         )
     }
 
-    pub fn jwt(&self) -> &JwtConf {
-        &self.jwt
+    pub fn get_jwt(&self) -> jwt::JWTManager {
+        jwt::JWTManager::new(
+            &self.jwt.secret.as_str(),
+            self.jwt.expiration,
+            &self.jwt.issuer.as_str(),
+        )
+    }
+
+    pub fn get_server_port(&self) -> u32 {
+        self.server.port.unwrap_or(8080)
     }
 }

@@ -1,16 +1,23 @@
-pub mod admin;
-
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+// @generated
+pub mod admin {
+    #[cfg(feature = "admin-v1")]
+    // @@protoc_insertion_point(attribute:admin.v1)
+    pub mod v1 {
+        include!("admin/v1/admin.v1.rs");
+        // @@protoc_insertion_point(admin.v1)
+    }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+#[cfg(feature = "base")]
+// @@protoc_insertion_point(attribute:base)
+pub mod base {
+    include!("base/base.rs");
+    // @@protoc_insertion_point(base)
+}
+pub mod buf {
+    #[cfg(feature = "buf-validate")]
+    // @@protoc_insertion_point(attribute:buf.validate)
+    pub mod validate {
+        include!("buf/validate/buf.validate.rs");
+        // @@protoc_insertion_point(buf.validate)
     }
 }

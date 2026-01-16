@@ -1,0 +1,10 @@
+deb https://mirrors.aliyun.com/ubuntu/ 24.04 main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu/ 24.04-security main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu/ 24.04-updates main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu/ 24.04-proposed main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu/ 24.04-backports main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ 24.04 main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ 24.04-security main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ 24.04-updates main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ 24.04-proposed main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ 24.04-backports main restricted universe multiverse
