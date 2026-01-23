@@ -226,7 +226,7 @@ mod tests {
         // println!("insert one success: {:?}", res);
 
         let cond = Condition::all().add(user::Column::UserId.eq(user_id.clone()));
-        let user_query = dbop::get_by_cond::<user::Entity>(db.as_ref(), &cond).await;
+        let user_query = dbop::get_by_cond::<user::Entity>(db.get_db(), &cond).await;
 
         println!("user_query: {:?}", user_query);
     }

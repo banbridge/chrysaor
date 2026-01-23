@@ -5,6 +5,7 @@ pub type AppResult<T> = Result<T, AppErrorBuilt>;
 
 #[derive(Copy, Clone, Debug, BizError)]
 pub enum AppError {
+    // http请求就相关错误
     #[detail(code = 0, http_status = 200)]
     Ok,
     #[detail(code = 1000000, http_status = 500, message_zh = "内部通用错误")]
@@ -34,6 +35,7 @@ pub enum AppError {
     )]
     ValidateParamFailed,
 
+    // 参数解析错误码
     #[detail(
         code = 1010000,
         http_status = 400,
@@ -71,7 +73,9 @@ pub enum AppError {
         http_status = 401,
         message_zh = "Token编码失败，请检查对应参数"
     )]
-    JwtEncode = 1020004,
+    JwtEncode,
+    #[detail(code = 1020004, http_status = 401, message_zh = "用户名或密码错误")]
+    PasswordInvalid,
 
     // 数据库相关错误吗
     #[detail(code = 1030000, http_status = 500, message_zh = "数据库错误")]

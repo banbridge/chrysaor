@@ -71,7 +71,7 @@ mod tests {
         let dsn = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         let db = conn::get_postgresql_db(dsn.as_str()).await.unwrap();
 
-        let e = get_enforcer(db).await.unwrap();
+        let e = get_enforcer(db.get_db().clone()).await.unwrap();
 
         // let rs = e
         //     .add_policy(vec![

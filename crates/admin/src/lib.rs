@@ -1,5 +1,5 @@
 pub mod app;
-pub(crate) mod biz;
-mod conf;
-pub mod router;
-pub(crate) mod util;
+mod application;
+pub mod domain;
+mod infrastructure;
+pub mod interfaces;

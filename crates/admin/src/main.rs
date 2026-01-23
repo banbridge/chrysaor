@@ -1,6 +1,6 @@
 #[allow(unused_imports)]
 use admin::app::AdminService;
-use admin::router::get_app_routers;
+use admin::interfaces::get_routers;
 use axum::Extension;
 use common::{middle, util};
 use std::sync::Arc;
@@ -16,9 +16,7 @@ async fn main() {
 pub async fn run(#[di(name = "admin_service")] admin_service: Arc<AdminService>) {
     //println!("{:?}", config);
 
-    let router = get_app_routers();
-
-    let router = router.fallback(middle::handler_404);
+    let router = get_routers().fallback(middle::handler_404);
 
     let app = middle::add_middleware_list(router).layer(Extension(admin_service.clone()));
 

@@ -1,7 +1,9 @@
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::cmp::max;
 
-pub async fn get_postgresql_db(dsn: &str) -> anyhow::Result<DatabaseConnection> {
+pub struct DBManager(DatabaseConnection);
+
+pub async fn get_postgresql_db(dsn: &str) -> anyhow::Result<DBManager> {
     let mut options = ConnectOptions::new(dsn);
 
     let cpu_cores = num_cpus::get() as u32;
@@ -17,5 +19,15 @@ pub async fn get_postgresql_db(dsn: &str) -> anyhow::Result<DatabaseConnection> 
     let db = Database::connect(options).await?;
     db.ping().await?;
 
-    Ok(db)
+    Ok(DBManager::new(db))
+}
+
+impl DBManager {
+    pub fn new(db: DatabaseConnection) -> Self {
+        Self(db)
+    }
+
+    pub fn get_db(&self) -> &DatabaseConnection {
+        &self.0
+    }
 }

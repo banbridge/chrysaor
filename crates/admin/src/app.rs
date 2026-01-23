@@ -1,19 +1,19 @@
 use std::sync::Arc;
 
-use crate::biz::login::LoginCommandService;
-use crate::conf::AdminConfig;
+use crate::application::LoginAppService;
+use crate::infrastructure::config::AdminConfig;
 use common::context::init_logger;
 use infra::casbin_auth::CasbinManager;
+use infra::conn::DBManager;
 
 #[derive(Clone)]
 #[rudi::Singleton(async, name = "admin_service", binds=[Self::into_admin_service])]
 pub struct AdminService {
     #[di(name = "config")]
     pub config: Arc<AdminConfig>,
-    // #[di(name = "login_controller")]
-    // pub login_controller: Arc<LoginController>,
+
     #[di(name = "pg_db")]
-    pub pg_db: Arc<sea_orm::DatabaseConnection>,
+    pub pg_db: Arc<DBManager>,
 
     #[di(name = "jwt_manager")]
     pub jwt_manager: Arc<common::jwt::JWTManager>,
@@ -21,8 +21,8 @@ pub struct AdminService {
     #[di(name = "casbin_manager")]
     pub casbin_manager: Arc<CasbinManager>,
 
-    #[di(name = "login_command_service")]
-    pub login_command_service: Arc<LoginCommandService>,
+    #[di(name = "login_app_service")]
+    pub login_svc: Arc<LoginAppService>,
 }
 
 impl AdminService {
@@ -43,9 +43,7 @@ pub fn get_config() -> Arc<AdminConfig> {
 }
 
 #[rudi::Singleton(name = "pg_db")]
-async fn init_db(
-    #[di(name = "config")] conf: Arc<AdminConfig>,
-) -> Arc<sea_orm::DatabaseConnection> {
+async fn init_db(#[di(name = "config")] conf: Arc<AdminConfig>) -> Arc<DBManager> {
     let db = infra::conn::get_postgresql_db(conf.get_db_dsn().as_str())
         .await
         .unwrap();
@@ -61,10 +59,8 @@ async fn init_jwt_manager(
 }
 
 #[rudi::Singleton(name = "casbin_manager")]
-async fn init_casbin_manager(
-    #[di(name = "pg_db")] db: Arc<sea_orm::DatabaseConnection>,
-) -> Arc<CasbinManager> {
-    let res = CasbinManager::new(db.as_ref().clone())
+async fn init_casbin_manager(#[di(name = "pg_db")] db: Arc<DBManager>) -> Arc<CasbinManager> {
+    let res = CasbinManager::new(db.get_db().clone())
         .await
         .expect("init casbin manager failed");
     Arc::new(res)

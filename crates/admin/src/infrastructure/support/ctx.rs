@@ -1,4 +1,4 @@
-use super::User;
+use super::UserClaim;
 use faststr::FastStr;
 use getset::{Getters, Setters};
 
@@ -8,8 +8,8 @@ pub struct Ctx {
     user_id: FastStr,
 }
 
-impl From<User> for Ctx {
-    fn from(user: User) -> Self {
+impl From<UserClaim> for Ctx {
+    fn from(user: UserClaim) -> Self {
         Self {
             user_id: user.user_id().clone(),
         }
